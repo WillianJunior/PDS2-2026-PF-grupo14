@@ -9,7 +9,7 @@
 | Conhece seu valor em ouro (para compra e venda) | `Merchant` |
 | Conhece se é acumulável (stackable) e o limite máximo por pilha | `Inventory` |
 | Conhece a quantidade atual na pilha | `Inventory` |
-| Realiza seu efeito ao ser usado (restaura HP, restaura MP, etc.) | `Character` |
+| Realiza seu efeito ao ser usado (restaura HP, restaura PP, etc.) | `Character` |
 | Sabe se pode ser equipado e em qual slot de equipamento pertence | `Character` |
 | Verifica se é de uso único e sinaliza remoção após uso | `Inventory` |
 
