@@ -81,5 +81,3 @@
 3. **Checkpoints Simplificados:** O salvamento agora é vinculado ao progresso na história (Capítulos) e não mais a um objeto físico ou sala específica no mapa.
 
 4. **Sistema de Combate Detalhado:** Adicionadas as regras completas de Turnos, Ataque, HP, MP, Energia e Escudo, formalizando a mecânica de jogo conforme especificado.
-
-5. **Renomeação de SP para MP:** A energia mental responsável pelos ataques especiais passou a se chamar MP, refletindo melhor sua função narrativa no sistema.
