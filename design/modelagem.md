@@ -81,3 +81,93 @@
 3. **Checkpoints Simplificados:** O salvamento agora é vinculado ao progresso na história (Capítulos) e não mais a um objeto físico ou sala específica no mapa.
 
 4. **Sistema de Combate Detalhado:** Adicionadas as regras completas de Turnos, Ataque, HP, MP, Energia e Escudo, formalizando a mecânica de jogo conforme especificado.
+
+
+# Melhorias na Arquitetura do Projeto 07/05/2026
+
+## 1. Generalização de Personagens (Herança)
+
+### O que mudou
+Em vez de classes isoladas para `Aventureiro` e `Inimigo`, foi criada uma classe base chamada `Personagem`.
+
+### Vantagem
+Evita repetição de código. Lógicas de vida, atributos básicos e a função de “receber dano” ficam centralizadas em um único lugar.  
+As classes `Aventureiro` e `Inimigo` apenas herdam essa base e adicionam suas particularidades.
+
+---
+
+## 2. Criação do Motor do Jogo (`MotorJogo`)
+
+### O que mudou
+A responsabilidade de “rodar o jogo” saiu da `main` ou da classe `Cena` e foi transferida para uma classe controladora dedicada.
+
+### Vantagem
+Separa o **Roteiro** (dados da cena) da **Execução** (lógica do loop).  
+
+O `MotorJogo` decide:
+- quando iniciar um combate;
+- quando carregar diálogos;
+- quando verificar derrota do jogador.
+
+Isso mantém o fluxo organizado e desacoplado.
+
+---
+
+## 3. Objetivação de Habilidades (`Habilidade`)
+
+### O que mudou
+As ações de combate (ataques, magias e buffs) deixaram de ser apenas strings ou estruturas `if/else` dentro do jogador e passaram a ser objetos próprios.
+
+### Vantagem
+Facilita a expansão do jogo.  
+
+Exemplo:
+- Para criar um “Ataque Especial com Sangramento”, basta criar uma nova `Habilidade` com parâmetros específicos, sem alterar o código principal do sistema de combate.
+
+---
+
+## 4. Isolamento da Interface (`InterfaceJogo`)
+
+### O que mudou
+Foi feita uma separação rigorosa entre:
+- lógica do jogo;
+- entrada e saída de dados.
+
+Nenhuma classe de lógica (`Combate`, `Cena`, etc.) deve usar `std::cout` ou `std::cin`.
+
+### Vantagem
+O código fica muito mais fácil de testar e manter.  
+
+Caso futuramente o terminal seja substituído por uma interface gráfica, basta reescrever apenas a classe `InterfaceJogo`.
+
+---
+
+## 5. Gestão de Fluxo Narrativo (`Cena` vs `Combate`)
+
+### O que mudou
+A classe `Cena` tornou-se apenas um contêiner de dados responsável por:
+- textos;
+- escolhas;
+- próximos destinos da narrativa.
+
+Já a classe `Combate` é temporária e existe somente enquanto a batalha acontece.
+
+### Vantagem
+Melhora a clareza das responsabilidades e evita desperdício de memória.  
+
+Uma cena de diálogo não carrega recursos de combate desnecessários, e o combate existe apenas quando realmente necessário.
+
+---
+
+# Resumo das Novas Classes
+
+| Classe | Papel Principal |
+|---|---|
+| `Personagem` | Base para vida, defesa e sistema de dano (Herança). |
+| `Aventureiro` | Gerencia recursos exclusivos do jogador (Energia, MP, Itens). |
+| `Inimigo` | Define comportamento e recompensas dos inimigos. |
+| `Cena` | Contém texto, escolhas e progressão narrativa. |
+| `Combate` | Gerencia turnos, dano e regras da batalha. |
+| `Habilidade` | Define custos e efeitos especiais dos golpes. |
+| `MotorJogo` | Coordena o fluxo principal do jogo. |
+| `InterfaceJogo` | Responsável pela entrada e saída no terminal. |
