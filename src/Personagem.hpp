@@ -5,87 +5,65 @@
 
 /**
  * @file Personagem.hpp
- * @brief Classe base abstrata para todos as entidades do jogo.
- * @author PDS2 - Grupo 14
- * @date 2026-05-07
- *
- * Define os atributos e comportamentos comuns a Aventureiro e Inimigo,
- * centralizando a lógica de vida, defesa e recebimento de dano.
+ * @brief Definição da classe base Personagem.
  */
 
 /**
  * @class Personagem
- * @brief Classe base que representa um personagem genérico no sistema RPG.
- *
- * Contém os atributos fundamentais compartilhados por todos os personagens:
- * nome, HP, defesa e nível. As subclasses herdam essa estrutura e adicionam
- * comportamentos específicos.
+ * @brief Classe abstrata que define os atributos e métodos básicos de qualquer entidade no jogo.
  */
 class Personagem {
 public:
     /**
      * @brief Construtor da classe Personagem.
-     * @param nome     Nome do personagem.
-     * @param hp       Pontos de vida iniciais.
-     * @param defesa   Valor base de defesa.
-     * @param nivel    Nível inicial do personagem.
+     * @param nome Nome da entidade.
+     * @param hp Pontos de vida iniciais.
+     * @param defesa Pontos de defesa base.
+     * @param nivel Nível inicial.
      */
-    Personagem(const std::string& nome, int hp, int defesa, int nivel);
+    Personagem(std::string nome, int hp, int defesa, int nivel);
 
-    /**
-     * @brief Destrutor virtual para permitir herança segura.
-     */
+    /** @brief Destrutor virtual para garantir a limpeza correta das subclasses. */
     virtual ~Personagem() = default;
 
     /**
-     * @brief Aplica dano ao personagem, descontando a defesa.
-     * @param dano  Valor bruto do dano recebido.
-     * @note Dano final = max(0, dano - defesa). HP não fica negativo.
+     * @brief Método virtual puro para execução do turno.
+     * @param alvo Ponteiro ou referência para o oponente.
+     */
+    virtual void executarTurno(Personagem& alvo) = 0;
+
+    /**
+     * @brief Reduz o HP do personagem com base no dano recebido e defesa.
+     * @param dano Valor bruto do dano.
      */
     virtual void receberDano(int dano);
 
     /**
-     * @brief Verifica se o personagem está vivo.
-     * @return true se HP > 0, false caso contrário.
+     * @brief Incrementa o HP do personagem respeitando o limite máximo.
+     * @param valor Quantidade de cura.
      */
-    bool estaVivo() const;
+    virtual void receberCura(int valor);
 
-    /**
-     * @brief Retorna o nome do personagem.
-     * @return Nome como string.
-     */
-    std::string getNome() const;
+    /** @brief Retorna o valor de defesa atual do personagem. */
+    virtual int getDefesa() const;
 
-    /**
-     * @brief Retorna o HP atual do personagem.
-     * @return Valor inteiro do HP atual.
-     */
+    /** @brief Retorna o HP atual. */
     int getHP() const;
-
-    /**
-     * @brief Retorna o HP máximo do personagem.
-     * @return Valor inteiro do HP máximo.
-     */
+    /** @brief Retorna o HP máximo. */
     int getHPMax() const;
-
-    /**
-     * @brief Retorna o valor de defesa atual.
-     * @return Valor inteiro da defesa.
-     */
-    int getDefesa() const;
-
-    /**
-     * @brief Retorna o nível atual do personagem.
-     * @return Valor inteiro do nível.
-     */
+    /** @brief Verifica se o HP é maior que zero. */
+    bool estaVivo() const;
+    /** @brief Retorna o nome do personagem. */
+    std::string getNome() const;
+    /** @brief Retorna o nível atual. */
     int getNivel() const;
 
 protected:
-    std::string nome;   ///< Nome do personagem.
-    int hp;             ///< HP atual.
-    int hpMax;          ///< HP máximo.
-    int defesa;         ///< Valor base de defesa.
-    int nivel;          ///< Nível do personagem.
+    std::string _nome; ///< Nome do personagem.
+    int _hp;           ///< Pontos de vida atuais.
+    int _hpMax;        ///< Limite máximo de vida.
+    int _defesaBase;   ///< Defesa natural sem bônus.
+    int _nivel;        ///< Nível da entidade.
 };
 
-#endif // PERSONAGEM_HPP
+#endif
