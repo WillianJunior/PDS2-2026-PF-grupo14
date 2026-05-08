@@ -10,7 +10,15 @@
 class Inimigo : public Personagem {
 public:
     /**
-     * @param tipo String que define qual script de IA será executado (ex: "Orc", "Slime").
+     * @param tipo String que define qual script será executado (ex: "Orc", "Slime").
+     *//**
+     * @brief Construtor da classe Inimigo.
+     * @param nome Nome do inimigo.
+     * @param hp Pontos de vida.
+     * @param defesa Pontos de defesa.
+     * @param nivel Nível do inimigo.
+     * @param xp Experiência concedida ao derrotá-lo.
+     * @param tipo Tipo do script (ex: "Orc").
      */
     Inimigo(std::string nome, int hp, int defesa, int nivel, int xp, std::string tipo);
 
