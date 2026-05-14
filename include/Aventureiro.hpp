@@ -56,6 +56,11 @@ public:
     int getForcaTotal() const;
     int getIDCheckpoint() const;
     const std::vector<Habilidade>& getHabilidades() const;
+    int getMP() const;
+    int getMPMax() const;
+    int getEnergia() const;
+    int getEnergiaMax() const;
+    void setIDCheckpoint(int id); // Para atualizar quando passar por uma cena de save
 
 private:
     int _energia, _energiaMax;

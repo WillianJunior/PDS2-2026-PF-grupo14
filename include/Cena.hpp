@@ -10,6 +10,7 @@ struct Escolha {
     int destinoID;           ///< ID da cena para onde o jogador irá.
     bool geraCombate;        ///< Define se a escolha dispara uma luta.
     std::string tipoInimigo; ///< Caso haja combate, qual o script do inimigo.
+    int itemGanhoID;         /// Opcional: 0 se nenhum, >0 se ganhar algo
 };
 
 /**

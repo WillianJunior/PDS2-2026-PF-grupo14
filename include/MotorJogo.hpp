@@ -5,6 +5,9 @@
 #include "Cena.hpp"
 #include <map>
 
+class Inimigo; //A inclusão do Header é feita no arquivo.cpp.
+class Combate; //A inclusão do Header é feita no arquivo.cpp.
+
 /**
  * @class MotorJogo
  * @brief Classe controladora que conecta a narrativa ao sistema de combate.
@@ -15,6 +18,11 @@ public:
 
     /** @brief Roda o loop principal de transicao de cenas e eventos. */
     void rodar();
+
+    /** * @brief Orquestra a criação do inimigo, o loop de combate e a limpeza de memória.
+     * @return true se o jogador venceu, false se foi derrotado.
+        */
+    bool realizarCombate(std::string tipoInimigo);
 
 private:
     Aventureiro& _player;
