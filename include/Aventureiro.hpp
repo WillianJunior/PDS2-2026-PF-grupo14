@@ -60,6 +60,7 @@ public:
     int getMPMax() const;
     int getEnergia() const;
     int getEnergiaMax() const;
+
     void setIDCheckpoint(int id); // Para atualizar quando passar por uma cena de save
 
 private:
