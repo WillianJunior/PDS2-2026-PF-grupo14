@@ -4,4 +4,3 @@
  - Gostei do uso de referências (&) e const.
  - Gostei que vocês começaram a modelar como vai ser a UI.
  - O MotorJogo que imagino representar as regas de negócio do sistema de vocês precisa apenas saber do Aventureiro? A decisão de como o jogo se desenvolve independe da Cena ou de Inimigos?
- - Por favor, venham conversar comigo sobre o README.
