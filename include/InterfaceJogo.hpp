@@ -33,11 +33,9 @@ public:
      */
     static int solicitarEscolha(std::vector<std::string> opcoes);
 
-    /**
-     * @brief Mostra as barras de status (HP, MP, Energia) de um personagem.
-     * * Utiliza polimorfismo para identificar se o personagem é um Aventureiro (exibindo recursos extras)
-     * ou um Inimigo (exibindo apenas HP e Nível).
-     * * @param p Referência constante para o personagem a ser exibido.
+   /**
+     * @brief Mostra as barras de status de qualquer personagem.
+     * Graças ao polimorfismo, ele chama automaticamente a versão correta dos dados.
      */
     static void exibirStatus(const Personagem& p);
 
