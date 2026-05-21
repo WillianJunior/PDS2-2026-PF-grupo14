@@ -1,0 +1,6 @@
+ - Vocês colocaram os headers no ./src. Isso está errado. Headers no ./include.
+ - Bem legal a descrição/modelagem do projeto no doxygen, mas não encontrei a documentação das classes. Tive que gerar manualmente a partir de ./src para ver.
+ - Só uma hierarquia, e parece bem trivial. Será que não tem mais alguma oportunidade aqui?
+ - Gostei do uso de referências (&) e const.
+ - Gostei que vocês começaram a modelar como vai ser a UI.
+ - O MotorJogo que imagino representar as regas de negócio do sistema de vocês precisa apenas saber do Aventureiro? A decisão de como o jogo se desenvolve independe da Cena ou de Inimigos?
