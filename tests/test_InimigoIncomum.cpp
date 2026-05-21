@@ -3,9 +3,13 @@
  * @brief Testes de unidade para Bruxa e GolemPedra usando doctest (TDD).
  */
 
-#include "doctest/doctest.h"
+#include "doctest.h"
 #include "InimigoIncomum.hpp"
 #include "Aventureiro.hpp"
+
+// =========================================================
+// SUITE: Bruxa
+// =========================================================
 
 TEST_SUITE("Bruxa - Estado Inicial") {
 
@@ -36,6 +40,7 @@ TEST_SUITE("Bruxa - Comportamento") {
         Aventureiro a("Herói", 500, 0, 10);
         Bruxa b("Bruxa", 3);
         int hpAntes = a.getHP();
+        
         b.executarTurno(a);
         CHECK(a.getHP() < hpAntes);
     }
@@ -43,17 +48,27 @@ TEST_SUITE("Bruxa - Comportamento") {
     TEST_CASE("Bruxa recebe dano e HP diminui") {
         Bruxa b("Bruxa", 3);
         int hpAntes = b.getHP();
+        
         b.receberDano(20);
         CHECK(b.getHP() < hpAntes);
     }
 
-    TEST_CASE("Bruxa morre com dano letal") {
+    TEST_CASE("Bruxa morre com dano letal - Status") {
         Bruxa b("Bruxa", 3);
         b.receberDano(99999);
         CHECK(b.estaVivo() == false);
+    }
+
+    TEST_CASE("Bruxa morre com dano letal - Zerar HP") {
+        Bruxa b("Bruxa", 3);
+        b.receberDano(99999);
         CHECK(b.getHP() == 0);
     }
 }
+
+// =========================================================
+// SUITE: GolemPedra
+// =========================================================
 
 TEST_SUITE("GolemPedra - Estado Inicial") {
 
@@ -79,6 +94,7 @@ TEST_SUITE("GolemPedra - Comportamento") {
         Aventureiro a("Herói", 500, 0, 10);
         GolemPedra gp("Golem", 4);
         int hpAntes = a.getHP();
+        
         gp.executarTurno(a);
         CHECK(a.getHP() < hpAntes);
     }
@@ -86,13 +102,20 @@ TEST_SUITE("GolemPedra - Comportamento") {
     TEST_CASE("GolemPedra recebe dano e HP diminui") {
         GolemPedra gp("Golem", 4);
         int hpAntes = gp.getHP();
+        
         gp.receberDano(30);
         CHECK(gp.getHP() < hpAntes);
     }
 
-    TEST_CASE("GolemPedra morre com dano letal") {
+    TEST_CASE("GolemPedra morre com dano letal - Status") {
         GolemPedra gp("Golem", 4);
         gp.receberDano(99999);
         CHECK(gp.estaVivo() == false);
+    }
+
+    TEST_CASE("GolemPedra morre com dano letal - Zerar HP") {
+        GolemPedra gp("Golem", 4);
+        gp.receberDano(99999);
+        CHECK(gp.getHP() == 0);
     }
 }

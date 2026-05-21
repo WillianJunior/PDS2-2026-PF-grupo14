@@ -1,13 +1,21 @@
 #include "InimigoIncomum.hpp"
 
-Bruxa::Bruxa(std::string nome, int nivel)
-    : Inimigo(nome, 0, 0, nivel, 0, "Bruxa"), _mana(0) {}
+// ============================================================================
+// IMPLEMENTAÇÃO DA CLASSE: BRUXA (Estilo Esqueleto/TDD Red Compacto)
+// ============================================================================
 
-void Bruxa::executarTurno(Personagem& alvo) {}
+Bruxa::Bruxa(std::string nome, int nivel)
+    : Inimigo(nome, 50 * nivel, 3 * nivel, 12 * nivel, nivel, 40 * nivel) { _mana = 30 * nivel; }
+
+void Bruxa::executarTurno(Personagem& alvo) { (void)alvo; }
+
+// ============================================================================
+// IMPLEMENTAÇÃO DA CLASSE: GOLEM DE PEDRA (Estilo Esqueleto/TDD Red Compacto)
+// ============================================================================
 
 GolemPedra::GolemPedra(std::string nome, int nivel)
-    : Inimigo(nome, 0, 0, nivel, 0, "GolemPedra") {}
+    : Inimigo(nome, 100 * nivel, 12 * nivel, 15 * nivel, nivel, 50 * nivel) {}
 
-void GolemPedra::executarTurno(Personagem& alvo) {}
+void GolemPedra::executarTurno(Personagem& alvo) { (void)alvo; }
 
-void GolemPedra::receberDano(int dano) {}
+void GolemPedra::receberDano(int dano) { (void)dano; }

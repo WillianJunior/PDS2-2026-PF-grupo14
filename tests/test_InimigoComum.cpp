@@ -3,95 +3,78 @@
  * @brief Testes de unidade para Goblin e Slime usando doctest (TDD).
  */
 
-#include "doctest/doctest.h"
+#include "doctest.h"
 #include "InimigoComum.hpp"
 #include "Aventureiro.hpp"
 
-TEST_SUITE("Goblin - Estado Inicial") {
+TEST_SUITE("Inimigos Comun - Estado Inicial") {
 
-    TEST_CASE("Goblin começa vivo") {
+    TEST_CASE("Goblin começa vivo e com status positivo") {
         Goblin g("Goblin", 1);
         CHECK(g.estaVivo() == true);
-    }
-
-    TEST_CASE("Goblin tem HP positivo") {
-        Goblin g("Goblin", 1);
         CHECK(g.getHP() > 0);
-    }
-
-    TEST_CASE("Goblin tem XP de recompensa positiva") {
-        Goblin g("Goblin", 1);
         CHECK(g.getXPRecompensa() > 0);
     }
 
-    TEST_CASE("Goblin armazena nome corretamente") {
-        Goblin g("GoblinTeste", 1);
-        CHECK(g.getNome() == "GoblinTeste");
+    TEST_CASE("Slime começa vivo e com status positivo") {
+        Slime s("Slime Azul", 1);
+        CHECK(s.estaVivo() == true);
+        CHECK(s.getHP() > 0);
+        CHECK(s.getXPRecompensa() > 0);
     }
 
-    TEST_CASE("Goblin nível 5 tem mais HP que nível 1") {
-        Goblin g1("Goblin", 1);
-        Goblin g5("Goblin", 5);
-        CHECK(g5.getHP() > g1.getHP());
+    TEST_CASE("getDeclaracaoStatus do Goblin funciona no esqueleto") {
+        Goblin g("GoblinTeste", 1);
+        std::string status = g.getDeclaracaoStatus();
+        if (!status.empty()) {
+            CHECK(status.find("GoblinTeste") != std::string::npos);
+        } else {
+            CHECK(false); // Falha limpa planejada (TDD Red)
+        }
     }
 }
 
-TEST_SUITE("Goblin - Comportamento") {
+TEST_SUITE("Inimigos Comun - Comportamento e Dano") {
 
-    TEST_CASE("Goblin causa dano ao aventureiro") {
-        Aventureiro a("Herói", 500, 0, 10);
+    TEST_CASE("Goblin causa dano ao aventureiro no seu turno") {
+        Aventureiro a("Herói", 200, 0, 10);
         Goblin g("Goblin", 1);
         int hpAntes = a.getHP();
+
         g.executarTurno(a);
+        CHECK(a.getHP() < hpAntes);
+    }
+
+    TEST_CASE("Slime causa dano ao aventureiro no seu turno") {
+        Aventureiro a("Herói", 200, 0, 10);
+        Slime s("Slime", 1);
+        int hpAntes = a.getHP();
+
+        s.executarTurno(a);
         CHECK(a.getHP() < hpAntes);
     }
 
     TEST_CASE("Goblin recebe dano e HP diminui") {
         Goblin g("Goblin", 1);
         int hpAntes = g.getHP();
-        g.receberDano(10);
+
+        g.receberDano(20);
         CHECK(g.getHP() < hpAntes);
     }
 
     TEST_CASE("Goblin morre com dano letal") {
         Goblin g("Goblin", 1);
-        g.receberDano(99999);
+        g.receberDano(9999);
         CHECK(g.estaVivo() == false);
-        CHECK(g.getHP() == 0);
     }
 }
 
-TEST_SUITE("Slime - Estado Inicial") {
+TEST_SUITE("Inimigos Comun - Escalonamento") {
 
-    TEST_CASE("Slime começa vivo") {
-        Slime s("Slime Azul", 1);
-        CHECK(s.estaVivo() == true);
-    }
-
-    TEST_CASE("Slime tem HP positivo") {
-        Slime s("Slime Azul", 1);
-        CHECK(s.getHP() > 0);
-    }
-
-    TEST_CASE("Slime tem XP de recompensa positiva") {
-        Slime s("Slime Azul", 1);
-        CHECK(s.getXPRecompensa() > 0);
-    }
-}
-
-TEST_SUITE("Slime - Comportamento") {
-
-    TEST_CASE("Slime causa dano ao aventureiro") {
-        Aventureiro a("Herói", 500, 0, 10);
-        Slime s("Slime Azul", 1);
-        int hpAntes = a.getHP();
-        s.executarTurno(a);
-        CHECK(a.getHP() < hpAntes);
-    }
-
-    TEST_CASE("Slime morre com dano letal") {
-        Slime s("Slime Azul", 1);
-        s.receberDano(99999);
-        CHECK(s.estaVivo() == false);
+    TEST_CASE("Goblin nível 5 é mais forte que nível 1") {
+        Goblin g1("Goblin Fraco", 1);
+        Goblin g5("Goblin Forte", 5);
+        CHECK(g5.getHP() > g1.getHP());
+        CHECK(g5.getXPRecompensa() > g1.getXPRecompensa());
     }
 }

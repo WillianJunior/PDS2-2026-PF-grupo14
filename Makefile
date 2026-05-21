@@ -1,99 +1,82 @@
-# =============================================================
-# Makefile — RPG Textual em C++
-# Targets: all | test | coverage | clean
-# =============================================================
+# ==========================================
+# MAKEFILE BÁSICO (WINDOWS + DOCTEST)
+# ==========================================
 
-CXX      := g++
-CXXFLAGS := -std=c++17 -Wall -Wextra
-COVFLAGS := --coverage -fprofile-arcs -ftest-coverage
+# Compilador
+CXX = g++
+
+# Flags
+CXXFLAGS = -std=gnu++17 -Wall -Wextra -D_GNU_SOURCE -Iinclude \
+-DDOCTEST_CONFIG_NO_MULTITHREADING \
+-DDOCTEST_CONFIG_NO_WINDOWS_SEH
+COVERAGE_FLAGS = --coverage -fprofile-arcs -ftest-coverage
 
 # Diretórios
-SRC_DIR   := src
-INC_DIR   := include
-TEST_DIR  := tests
-BUILD_DIR := build
-COV_DIR   := coverage
+SRC_DIR = src
+TEST_DIR = tests
+BUILD_DIR = build
 
-# Doctest (instalado via apt em /usr/include/doctest/doctest.h)
-DOCTEST_INC := /usr/include
+# ==========================================
+# ARQUIVOS-FONTE
+# ==========================================
 
-# Fontes de produção (todas as implementações, exceto main do jogo)
-SRCS := $(wildcard $(SRC_DIR)/*.cpp)
+# Remove o main.cpp do jogo
+SRC_FILES = $(filter-out $(SRC_DIR)/main.cpp,$(wildcard $(SRC_DIR)/*.cpp))
 
-# Fontes de teste
-TEST_SRCS := $(wildcard $(TEST_DIR)/*.cpp)
+# Objetos do sistema
+OBJ_FILES = $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SRC_FILES))
 
-# Objetos de produção (com flags de cobertura)
-PROD_OBJS := $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SRCS))
+# Arquivos de teste
+TEST_FILES = $(wildcard $(TEST_DIR)/*.cpp)
 
-# Objetos de teste
-TEST_OBJS := $(patsubst $(TEST_DIR)/%.cpp, $(BUILD_DIR)/test_%.o, $(TEST_SRCS))
+# Objetos dos testes
+TEST_OBJ = $(patsubst $(TEST_DIR)/%.cpp,$(BUILD_DIR)/test_%.o,$(TEST_FILES))
 
-# Executável de testes
-TEST_BIN := $(BUILD_DIR)/run_tests
+# Executável
+TEST_EXE = $(BUILD_DIR)/exec_tests.exe
 
-# =============================================================
+# ==========================================
 # TARGET PADRÃO
-# =============================================================
-.PHONY: all
-all: $(TEST_BIN)
+# ==========================================
 
-# =============================================================
-# TARGET: test — compila e executa os testes, depois gera cobertura
-# =============================================================
-.PHONY: test
-test: $(TEST_BIN)
-	@echo ""
-	@echo "============================================="
-	@echo "  Executando testes de unidade (doctest)"
-	@echo "============================================="
-	./$(TEST_BIN) --success
-	@echo ""
-	@echo "============================================="
-	@echo "  Gerando relatório de cobertura (gcovr)"
-	@echo "============================================="
-	@mkdir -p $(COV_DIR)
-	gcovr --root . \
-	      --exclude '$(TEST_DIR)/' \
-	      --exclude '/usr/' \
-	      --html-details $(COV_DIR)/index.html \
-	      --print-summary \
-	      -o $(COV_DIR)/coverage.txt
-	@echo ""
-	@echo "Relatório HTML gerado em: $(COV_DIR)/index.html"
-	@echo "Resumo salvo em:          $(COV_DIR)/coverage.txt"
+all:
+	@echo Rode: make test
 
-# =============================================================
-# LINKAGEM DO EXECUTÁVEL DE TESTES
-# =============================================================
-$(TEST_BIN): $(PROD_OBJS) $(TEST_OBJS) | $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) $(COVFLAGS) $^ -o $@
+# ==========================================
+# COMPILAÇÃO DOS .CPP DO SISTEMA
+# ==========================================
 
-# =============================================================
-# COMPILAÇÃO DOS OBJETOS DE PRODUÇÃO (com cobertura)
-# =============================================================
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp | $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) $(COVFLAGS) -I$(INC_DIR) -c $< -o $@
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
+	@if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) $(COVERAGE_FLAGS) -c $< -o $@
 
-# =============================================================
-# COMPILAÇÃO DOS OBJETOS DE TESTE
-# =============================================================
-$(BUILD_DIR)/test_%.o: $(TEST_DIR)/%.cpp | $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) $(COVFLAGS) -I$(INC_DIR) -I$(DOCTEST_INC) -c $< -o $@
+# ==========================================
+# COMPILAÇÃO DOS TESTES
+# ==========================================
 
-# =============================================================
-# CRIAÇÃO DOS DIRETÓRIOS
-# =============================================================
-$(BUILD_DIR):
-	mkdir -p $(BUILD_DIR)
+$(BUILD_DIR)/test_%.o: $(TEST_DIR)/%.cpp
+	@if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(COV_DIR):
-	mkdir -p $(COV_DIR)
+# ==========================================
+# TESTES
+# ==========================================
 
-# =============================================================
-# TARGET: clean — remove artefatos gerados
-# =============================================================
-.PHONY: clean
+test: $(OBJ_FILES) $(TEST_OBJ)
+	@echo Linkando executavel...
+	$(CXX) $(CXXFLAGS) $(COVERAGE_FLAGS) $(OBJ_FILES) $(TEST_OBJ) -o $(TEST_EXE)
+
+	@echo Executando testes...
+	$(TEST_EXE)
+
+	@echo Gerando cobertura...
+	gcovr --root . --exclude tests --print-summary
+
+# ==========================================
+# LIMPEZA
+# ==========================================
+
 clean:
-	rm -rf $(BUILD_DIR) $(COV_DIR)
-	@echo "Limpeza concluída."
+	@if exist $(BUILD_DIR) rmdir /s /q $(BUILD_DIR)
+
+.PHONY: all test clean

@@ -1,14 +1,25 @@
 #include "InterfaceJogo.hpp"
-#include <iostream>
 
-void InterfaceJogo::exibirTexto(std::string texto) {}
+// ============================================================================
+// MÉTODOS DE ENTRADA E SAÍDA DE TEXTO (Estilo Esqueleto/TDD Red Compacto)
+// ============================================================================
 
-int InterfaceJogo::solicitarEscolha(std::vector<std::string> opcoes) { return 1; }
+void InterfaceJogo::exibirTexto(std::string texto) { (void)texto; }
 
-void InterfaceJogo::exibirStatus(const Personagem& p) {}
+int InterfaceJogo::solicitarEscolha(std::vector<std::string> opcoes) { (void)opcoes; return 1; }
+
+// ============================================================================
+// MÉTODOS DE RENDERIZAÇÃO VISUAL E STATUS (Estilo Esqueleto/TDD Red Compacto)
+// ============================================================================
+
+void InterfaceJogo::exibirStatus(const Personagem& p) { (void)p; }
 
 void InterfaceJogo::limparTela() {}
 
 void InterfaceJogo::renderizarDivisor() {}
+
+// ============================================================================
+// CONTROLE DE FLUXO (Estilo Esqueleto/TDD Red Compacto)
+// ============================================================================
 
 void InterfaceJogo::pausar() {}

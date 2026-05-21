@@ -24,13 +24,13 @@ public:
      * @brief Construtor da classe Personagem.
      * * Configura os dados iniciais da entidade de combate. O parâmetro @p hp define tanto a 
      * vida atual quanto o limite máximo (@c _hpMax) no início do jogo.
-     * * @param nome Nome de exibição da entidade.
+     * * @param nome Nome de exibição da entidade.  
      * @param hp Pontos de vida máximos e atuais iniciais.
      * @param defesa Pontos de defesa base para mitigação de danos.
      * @param nivel Nível inicial de desafio ou progressão.
      * * @pre Os valores de @p hp, @p defesa e @p nivel devem ser maiores que zero.
      */
-    Personagem(std::string nome, int hp, int defesa, int nivel);
+    Personagem(std::string nome, int hp, int defesa, int forca, int nivel);
 
     /** * @brief Destrutor virtual puro padronizado.
      * * Garante que, ao deletar um ponteiro polimórfico de Personagem, o destrutor da subclasse 
@@ -99,6 +99,7 @@ protected:
     int _hpMax;           ///< Capacidade máxima de armazenamento de saúde.
     int _defesaBase;      ///< Atributo nativo de mitigação de dano físico.
     int _nivel;           ///< Nível de poder ou escala de atributos da entidade.
+    int _forcaBase;       ///< Atributo nativo de dano físico.
 
 private: 
     std::vector<Habilidade> _habilidades; ///< Repositório privado e blindado contendo as técnicas da entidade.

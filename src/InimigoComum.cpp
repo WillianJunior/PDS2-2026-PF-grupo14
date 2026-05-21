@@ -1,11 +1,19 @@
 #include "InimigoComum.hpp"
 
-Goblin::Goblin(std::string nome, int nivel)
-    : Inimigo(nome, 0, 0, nivel, 0, "Goblin") {}
+// ============================================================================
+// IMPLEMENTAÇÃO DA CLASSE: GOBLIN (Estilo Esqueleto/TDD Red Compacto)
+// ============================================================================
 
-void Goblin::executarTurno(Personagem& alvo) {}
+Goblin::Goblin(std::string nome, int nivel)
+    : Inimigo(nome, 40 * nivel, 4 * nivel, 8 * nivel, nivel, 20 * nivel) {}
+
+void Goblin::executarTurno(Personagem& alvo) { (void)alvo; }
+
+// ============================================================================
+// IMPLEMENTAÇÃO DA CLASSE: SLIME (Estilo Esqueleto/TDD Red Compacto)
+// ============================================================================
 
 Slime::Slime(std::string nome, int nivel)
-    : Inimigo(nome, 0, 0, nivel, 0, "Slime") {}
+    : Inimigo(nome, 30 * nivel, 2 * nivel, 5 * nivel, nivel, 10 * nivel) {}
 
-void Slime::executarTurno(Personagem& alvo) {}
+void Slime::executarTurno(Personagem& alvo) { (void)alvo; }

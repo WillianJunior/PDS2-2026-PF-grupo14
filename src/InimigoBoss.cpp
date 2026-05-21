@@ -1,6 +1,14 @@
 #include "InimigoBoss.hpp"
 
-Dragao::Dragao(std::string nome, int nivel)
-    : Inimigo(nome, 0, 0, nivel, 0, "Dragao"), _emFuria(false), _furiaContador(0) {}
+// ============================================================================
+// CONSTRUTOR - DRAGAO
+// ============================================================================
 
-void Dragao::executarTurno(Personagem& alvo) {}
+Dragao::Dragao(std::string nome, int nivel)
+    : Inimigo(nome, 150 * nivel, 15 * nivel, 20 * nivel, nivel, 100 * nivel) { _emFuria = false; _furiaContador = 0; }
+
+// ============================================================================
+// MÉTODOS MEMBROS (Estilo Esqueleto/TDD Red Compacto)
+// ============================================================================
+
+void Dragao::executarTurno(Personagem& alvo) { (void)alvo; }

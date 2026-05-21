@@ -6,7 +6,7 @@
  * às implementações, descrevendo o comportamento esperado de cada método.
  */
 
-#include "doctest/doctest.h"
+#include "doctest.h"
 #include "Habilidade.hpp"
 
 // =========================================================

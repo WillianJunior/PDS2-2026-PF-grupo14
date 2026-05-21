@@ -1,13 +1,28 @@
 #include "Habilidade.hpp"
 
-Habilidade::Habilidade(std::string nome, TipoHabilidade tipo, int custoE, int custoM, int valorBase) {}
+// ============================================================================
+// CONSTRUTOR
+// ============================================================================
 
-std::string Habilidade::getNome() const { return ""; }
+Habilidade::Habilidade(std::string nome, TipoHabilidade tipo, int custoE, int custoM, int valorBase, int duracao) {
+    _nome = nome; _tipo = tipo; _custoEnergia = custoE; _custoMP = custoM; 
+    _valorBase = valorBase; _duracao = duracao;
+}
 
-TipoHabilidade Habilidade::getTipo() const { return TipoHabilidade::FISICO; }
+// ============================================================================
+// GETTERS E MÉTODOS DE CHECAGEM (Estilo Esqueleto/TDD Red Compacto)
+// ============================================================================
 
-int Habilidade::getCustoEnergia() const { return 0; }
+std::string Habilidade::getNome() const { return _nome; }
 
-int Habilidade::getCustoMP() const { return 0; }
+TipoHabilidade Habilidade::getTipo() const { return _tipo; }
 
-int Habilidade::getValorBase() const { return 0; }
+int Habilidade::getCustoEnergia() const { return _custoEnergia; }
+
+int Habilidade::getCustoMP() const { return _custoMP; }
+
+int Habilidade::getValorBase() const { return _valorBase; }
+
+int Habilidade::getDuracao() const { return _duracao; }
+
+bool Habilidade::ehEfeitoContinuo() const { return _duracao > 0; }

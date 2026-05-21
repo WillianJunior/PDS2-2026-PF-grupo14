@@ -102,7 +102,7 @@ public:
      * @return true Se o herói subiu de nível nesta chamada.
      * @return false Se a experiência foi acumulada sem alteração de nível.
      */
-    bool ganarExperiencia(int qtd);
+    bool ganharExperiencia(int qtd);
 
     /** * @brief Incrementa permanentemente o bônus de dano de ataque por modificação de equipamento.
      * * @param valor Pontos de bônus ofensivo concedidos (ex: ao afiar uma espada em um evento).

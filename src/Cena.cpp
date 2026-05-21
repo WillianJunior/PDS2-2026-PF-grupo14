@@ -1,13 +1,23 @@
 #include "Cena.hpp"
 
-Cena::Cena(int id, std::string texto, bool checkpoint) {}
+// ============================================================================
+// CONSTRUTOR
+// ============================================================================
 
-void Cena::adicionarEscolha(Escolha e) {}
+Cena::Cena(int id, std::string texto, bool checkpoint) {
+    (void)id; (void)texto; (void)checkpoint;
+}
+
+// ============================================================================
+// MÉTODOS MEMBROS e GETTERS (Estilo Esqueleto/TDD Red Compacto)
+// ============================================================================
+
+void Cena::adicionarEscolha(Escolha e) { (void)e; }
 
 int Cena::getID() const { return 0; }
 
 std::string Cena::getTexto() const { return ""; }
 
-const std::vector<Escolha>& Cena::getEscolhas() const { return _escolhas; }
-
 bool Cena::isCheckpoint() const { return false; }
+
+const std::vector<Escolha>& Cena::getEscolhas() const { return _escolhas; }

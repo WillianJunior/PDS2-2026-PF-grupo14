@@ -6,13 +6,17 @@
  * existem e podem ser chamados sem causar erros (não lançam exceções).
  */
 
-#include "doctest/doctest.h"
+#include "doctest.h"
 #include "InterfaceJogo.hpp"
 #include "Aventureiro.hpp"
 
+// =========================================================
+// SUITE: InterfaceJogo - Métodos Estáticos
+// =========================================================
+
 TEST_SUITE("InterfaceJogo - Metodos estaticos") {
 
-    TEST_CASE("exibirTexto não lança exceção") {
+    TEST_CASE("exibirTexto não lança exceção com texto") {
         CHECK_NOTHROW(InterfaceJogo::exibirTexto("Texto de teste"));
     }
 
@@ -33,12 +37,15 @@ TEST_SUITE("InterfaceJogo - Metodos estaticos") {
         CHECK_NOTHROW(InterfaceJogo::renderizarDivisor());
     }
 
-    TEST_CASE("solicitarEscolha retorna valor dentro do intervalo válido") {
-        // Como solicitarEscolha lê stdin, testamos apenas que retorna 1
-        // quando não há entrada (comportamento stub)
+    TEST_CASE("solicitarEscolha - Limite Inferior Stub") {
         std::vector<std::string> opcoes = {"Atacar", "Defender", "Fugir"};
         int resultado = InterfaceJogo::solicitarEscolha(opcoes);
         CHECK(resultado >= 1);
-        CHECK(resultado <= (int)opcoes.size());
+    }
+
+    TEST_CASE("solicitarEscolha - Limite Superior Stub") {
+        std::vector<std::string> opcoes = {"Atacar", "Defender", "Fugir"};
+        int resultado = InterfaceJogo::solicitarEscolha(opcoes);
+        CHECK(resultado <= static_cast<int>(opcoes.size()));
     }
 }

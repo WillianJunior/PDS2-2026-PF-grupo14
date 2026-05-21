@@ -1,19 +1,71 @@
 #include "Personagem.hpp"
 
-Personagem::Personagem(std::string nome, int hp, int defesa, int nivel) {}
+// ============================================================================
+// CONSTRUTOR
+// ============================================================================
 
-void Personagem::receberDano(int dano) {}
+Personagem::Personagem(std::string nome, int hp, int defesa, int forca, int nivel) {
+    _nome = nome;
+    _hp = hp;
+    _hpMax = hp;
+    _defesaBase = defesa;
+    _forcaBase = forca;
+    _nivel = nivel;
+}
 
-void Personagem::receberCura(int valor) {}
+// ============================================================================
+// GERENCIAMENTO DE HABILIDADES
+// ============================================================================
 
-int Personagem::getDefesa() const { return 0; }
+void Personagem::adicionarHabilidade(const Habilidade& habilidade) {
+    _habilidades.push_back(habilidade);
+}
 
-int Personagem::getHP() const { return 0; }
+const std::vector<Habilidade>& Personagem::getHabilidades() const {
+    return _habilidades;
+}
 
-int Personagem::getHPMax() const { return 0; }
+// ============================================================================
+// SISTEMA DE COMBATE (IMPLEMENTAÇÃO PADRÃO)
+// ============================================================================
 
-bool Personagem::estaVivo() const { return false; }
+void Personagem::receberDano(int dano) {
+    int danoFinal = dano - getDefesa();
+    if (danoFinal < 0) danoFinal = 0;
+    
+    _hp -= danoFinal;
+    if (_hp < 0) _hp = 0;
+}
 
-std::string Personagem::getNome() const { return ""; }
+void Personagem::receberCura(int valor) {
+    _hp += valor;
+    if (_hp > _hpMax) _hp = _hpMax;
+}
 
-int Personagem::getNivel() const { return 0; }
+int Personagem::getDefesa() const {
+    return _defesaBase;
+}
+
+// ============================================================================
+// GETTERS (A PARTE QUE ESTAVA FALTANDO!)
+// ============================================================================
+
+int Personagem::getHP() const {
+    return _hp;
+}
+
+int Personagem::getHPMax() const {
+    return _hpMax;
+}
+
+bool Personagem::estaVivo() const {
+    return _hp > 0;
+}
+
+std::string Personagem::getNome() const {
+    return _nome;
+}
+
+int Personagem::getNivel() const {
+    return _nivel;
+}
