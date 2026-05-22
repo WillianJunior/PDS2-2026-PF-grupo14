@@ -1,49 +1,192 @@
-# Cartões CRC
+# 📇 Parte 1: Cartões CRC (Até 10 Classes Principais)
 
-## Cartão CRC — Aventureiro
+Os cartões CRC mapeiam as responsabilidades e colaborações das principais classes do sistema.
 
-| Responsabilidades | Colaborações |
-|---|---|
-| Armazena atributos (HP, Força, Agilidade, Inteligência) | Cena |
-| Executa ações de combate e decisões de diálogo | Combate, Cena |
-| Retorna ao checkpoint do capítulo atual em caso de derrota | Cena |
+---
 
-## Cartão CRC — Cena (Substitui o Mapa)
+## 1. Classe: `Personagem` *(Abstrata)*
 
-| Responsabilidades | Colaborações |
-|---|---|
-| Armazena o texto descritivo e diálogos da etapa atual | InterfaceJogo |
-| Gerencia a sequência lógica (Cena 1 -> Cena 2) | Aventureiro |
-| Define se a cena termina em um Combate ou em uma Decisão | Combate |
-| Armazena o estado do checkpoint (Capítulo atual) | Aventureiro |
+**Descrição:**  
+Superclasse abstrata responsável pelos atributos básicos e pelas regras gerais de combate.
 
-## Cartão CRC — Combate
+### Responsabilidades
+- Armazenar:
+  - nome
+  - HP atual
+  - HP máximo
+  - nível
+  - defesa base
+- Fornecer lógica base para:
+  - sofrer dano (`receberDano`)
+  - recuperar vida (`receberCura`)
+- Gerenciar o conjunto de habilidades do personagem
+- Definir os contratos abstratos:
+  - `executarTurno()`
+  - `getDeclaracaoStatus()`
 
-| Responsabilidades | Colaborações |
-|---|---|
-| Gerencia turnos entre Aventureiro e Inimigo | Aventureiro, Inimigo |
-| Processa cálculos de dano, uso de habilidades e custo de Energia | Habilidade |
-| Notifica a Cena quando o desafio for vencido para prosseguir | Cena |
+### Colaboradores
+- `Habilidade`
 
-## Cartão CRC — Inimigo
+---
 
-| Responsabilidades | Colaborações |
-|---|---|
-| Possui atributos de combate específicos para aquela cena | Combate |
-| Executa ações ofensivas baseadas em script de turno | Aventureiro |
+## 2. Classe: `Aventureiro`
 
-## Cartão CRC — Inventário e Itens
+**Descrição:**  
+Representa o personagem controlado pelo jogador, contendo progressão, recursos e evolução.
 
-| Responsabilidades | Colaborações |
-|---|---|
-| Armazena consumíveis e equipamentos ganhos na história | Aventureiro |
-| Aplica efeitos imediatos (Cura/Buff) durante o turno | Aventureiro |
-| Gerencia frascos de cura (máximo 3, recarregados ao dormir) | Aventureiro |
+### Responsabilidades
+- Exibir o menu de ações durante o turno do jogador
+- Gerenciar:
+  - MP
+  - Energia
+- Acumular XP
+- Gerenciar subida de nível (*Level Up*)
+- Aplicar bônus permanentes de:
+  - armas
+  - armaduras
+- Controlar o ID da cena usada como checkpoint
 
-## Cartão CRC — InterfaceJogo
+### Colaboradores
+- `Personagem`
+- `Habilidade`
+- `InterfaceJogo`
 
-| Responsabilidades | Colaborações |
-|---|---|
-| Exibe o log da história e as falas dos personagens | Cena |
-| Apresenta menus de escolha (Ex: 1. Atacar, 2. Fugir, 3. Conversar) | Combate, Cena |
-| Exibe atributos de combate: HP, MP, Energia, Escudo | Combate |
+---
+
+## 3. Classe: `Inimigo` *(Abstrata)*
+
+**Descrição:**  
+Superclasse abstrata que define o comportamento base das inteligências artificiais dos monstros.
+
+### Responsabilidades
+- Armazenar o XP concedido ao jogador após derrota
+- Controlar contador interno de turnos da IA
+
+### Colaboradores
+- `Personagem`
+
+---
+
+## 4. Classe: `Slime / Goblin`
+
+**Descrição:**  
+Inimigos comuns utilizados em batalhas iniciais ou tutoriais.
+
+### Responsabilidades
+- Implementar IA simples:
+  - ataque básico
+  - habilidade simples
+- Fornecer recompensas reduzidas
+
+### Colaboradores
+- `Inimigo`
+- `Personagem`
+
+---
+
+## 5. Classe: `Bruxa / GolemPedra`
+
+**Descrição:**  
+Inimigos intermediários com mecânicas especiais e padrões alternados.
+
+### Responsabilidades
+- Implementar IA baseada em turnos alternados
+  - Exemplo:
+    - Golem usa defesa em um turno
+    - Bruxa drena mana no outro
+
+### Colaboradores
+- `Inimigo`
+- `Personagem`
+
+---
+
+## 6. Classe: `Dragao`
+
+**Descrição:**  
+Chefe principal da campanha ou de uma grande ramificação da história.
+
+### Responsabilidades
+- Implementar IA avançada baseada na vida restante
+- Entrar em estado de fúria abaixo de determinado HP
+- Executar múltiplos ataques por turno
+- Utilizar habilidades de área massivas
+
+### Colaboradores
+- `Inimigo`
+- `Personagem`
+
+---
+
+## 7. Classe: `MotorJogo`
+
+**Descrição:**  
+Engine principal responsável pelo fluxo geral do jogo.
+
+### Responsabilidades
+- Executar o loop principal (`rodar`)
+- Carregar e transicionar cenas da história
+- Interpretar escolhas do jogador
+- Iniciar combates automaticamente
+- Instanciar inimigos dinamicamente
+- Resetar estado do jogo após derrota
+- Reposicionar jogador no checkpoint
+
+### Colaboradores
+- `Aventureiro`
+- `Cena`
+- `Combate`
+
+---
+
+## 8. Classe: `Cena`
+
+**Descrição:**  
+Representa um nó narrativo da campanha.
+
+### Responsabilidades
+- Armazenar:
+  - ID da cena
+  - texto descritivo
+  - indicador de checkpoint
+- Armazenar lista de escolhas possíveis
+
+### Colaboradores
+- `Escolha` *(struct)*
+
+---
+
+## 9. Classe: `Combate`
+
+**Descrição:**  
+Gerenciador das batalhas em turnos.
+
+### Responsabilidades
+- Controlar o fluxo de turnos até a derrota de um lado
+- Exibir mensagens de dano e cura
+- Conceder XP ao jogador após vitória
+
+### Colaboradores
+- `Aventureiro`
+- `Inimigo`
+
+---
+
+## 10. Classe: `InterfaceJogo`
+
+**Descrição:**  
+Responsável exclusivamente pela entrada e saída de dados no console.
+
+### Responsabilidades
+- Exibir caixas de diálogo e narrativa
+- Renderizar barras visuais de:
+  - HP
+  - MP
+  - Energia
+- Capturar e validar entradas numéricas do usuário
+
+### Colaboradores
+- `Personagem`
+- `Aventureiro`
+
+---
