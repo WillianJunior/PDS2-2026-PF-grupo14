@@ -1,8 +1,7 @@
-#ifndef INIMIGO_COMUM.HPP
-#define INIMIGO_COMUM.HPP
-#include "Inimigo.hpp"
+#ifndef INIMIGO_COMUM_HPP
+#define INIMIGO_COMUM_HPP
 
-//Esses inimigos são apenas exemplos por enquanto.
+#include "Inimigo.hpp"
 
 /**
  * @class Goblin
@@ -10,10 +9,9 @@
  */
 class Goblin : public Inimigo {
 public:
-    /** @brief Construtor que inicializa um Goblin padrão com base no nível. */
-    Goblin(std::string nome = "Goblin", int nivel);
+    // O parâmetro obrigatório 'nivel' vem antes do opcional 'nome'
+    Goblin(std::string nome, int nivel);
 
-    /** @brief Sobrescreve o turno para dar o comportamento ágil do Goblin. */
     void executarTurno(Personagem& alvo) override;
 };
 
@@ -23,15 +21,10 @@ public:
  */
 class Slime : public Inimigo {
 public:
-    Slime(std::string nome = "Slime Azul", int nivel);
+    // O parâmetro obrigatório 'nivel' vem antes do opcional 'nome'
+    Slime( std::string nome, int nivel);
 
     void executarTurno(Personagem& alvo) override;
 };
 
-
-
-
-
-
-
-#endif
+#endif // INIMIGO_COMUM_HPP
