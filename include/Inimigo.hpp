@@ -32,10 +32,11 @@ protected:
      * @param nome Nome do inimigo.
      * @param hp Pontos de vida.
      * @param defesa Pontos de defesa.
+     * @param forca Pontos de forca.
      * @param nivel Nível do inimigo.
      * @param xp Experiência concedida ao derrotá-lo.
      */
-    Inimigo(std::string nome, int hp, int defesa, int nivel, int xp);
+    Inimigo(std::string nome, int hp, int defesa, int forca, int nivel, int xp);
 
     int _contadorTurnos;    ///< Contador de rodadas utilizado para gerenciar o padrão do monstro.   
     int _xpRecompensa;     ///< Experiência concedida ao jogador.
