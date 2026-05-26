@@ -1,5 +1,5 @@
 # ==========================================
-# MAKEFILE BÁSICO (WINDOWS + DOCTEST)
+# MAKEFILE BÁSICO (MULTIPLATAFORMA + DOCTEST)
 # ==========================================
 
 # Compilador
@@ -15,6 +15,19 @@ COVERAGE_FLAGS = --coverage -fprofile-arcs -ftest-coverage
 SRC_DIR = src
 TEST_DIR = tests
 BUILD_DIR = build
+
+# Detecta o Sistema Operacional
+ifeq ($(OS),Windows_NT)
+    # Comandos para Windows
+    MKDIR = if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
+    RM = if exist $(BUILD_DIR) rmdir /s /q $(BUILD_DIR)
+    TEST_EXE = $(BUILD_DIR)/exec_tests.exe
+else
+    # Comandos para Linux/macOS
+    MKDIR = mkdir -p $(BUILD_DIR)
+    RM = rm -rf $(BUILD_DIR)
+    TEST_EXE = ./$(BUILD_DIR)/exec_tests.exe
+endif
 
 # ==========================================
 # ARQUIVOS-FONTE
@@ -32,9 +45,6 @@ TEST_FILES = $(wildcard $(TEST_DIR)/*.cpp)
 # Objetos dos testes
 TEST_OBJ = $(patsubst $(TEST_DIR)/%.cpp,$(BUILD_DIR)/test_%.o,$(TEST_FILES))
 
-# Executável
-TEST_EXE = $(BUILD_DIR)/exec_tests.exe
-
 # ==========================================
 # TARGET PADRÃO
 # ==========================================
@@ -47,7 +57,7 @@ all:
 # ==========================================
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
-	@if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
+	@$(MKDIR)
 	$(CXX) $(CXXFLAGS) $(COVERAGE_FLAGS) -c $< -o $@
 
 # ==========================================
@@ -55,7 +65,7 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 # ==========================================
 
 $(BUILD_DIR)/test_%.o: $(TEST_DIR)/%.cpp
-	@if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
+	@$(MKDIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # ==========================================
@@ -77,6 +87,6 @@ test: $(OBJ_FILES) $(TEST_OBJ)
 # ==========================================
 
 clean:
-	@if exist $(BUILD_DIR) rmdir /s /q $(BUILD_DIR)
+	@$(RM)
 
 .PHONY: all test clean
