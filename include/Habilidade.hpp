@@ -82,7 +82,8 @@ public:
      */
     bool ehEfeitoContinuo() const;
 
-private:
+    int getDuracaoEfeito() const { return _duracao;}
+    
     std::string _nome;       ///< Nome identificador da habilidade.
     TipoHabilidade _tipo;    ///< Natureza mecânica da ação.
     int _custoEnergia;       ///< Custo de uso focado na barra de Energia.

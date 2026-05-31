@@ -18,4 +18,3 @@ GolemPedra::GolemPedra(std::string nome, int nivel)
 
 void GolemPedra::executarTurno(Personagem& alvo) { (void)alvo; }
 
-void GolemPedra::receberDano(int dano) { (void)dano; }

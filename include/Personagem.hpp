@@ -11,6 +11,18 @@
  */
 
 /**
+ * @brief Estrutura que define as propriedades de um efeito de dano contínuo (DoT).
+ * * Mantém os dados necessários para que efeitos como veneno, queimadura ou 
+ * sangramento persistam na memória do alvo por múltiplos turnos.
+ */
+struct EfeitoDoT {
+    TipoHabilidade tipo;       /**< Tipo do efeito (obrigatoriamente TipoHabilidade::DOT para ignorar escudos). */
+    int danoPorTurno;          /**< Quantidade de dano bruto que será infligida a cada rodada. */
+    int turnosRestantes;       /**< Contador de rodadas que o efeito ainda permanecerá ativo. */
+    std::string nomeEfeito;    /**< Nome identificador do efeito (ex: "Veneno Serpentino", "Sangramento"). */
+};
+
+/**
  * @class Personagem
  * @brief Classe abstrata que define os atributos, recursos de saúde e comportamentos básicos de qualquer entidade no jogo.
  * * A classe Personagem serve como a base conceitual para jogadores e monstros. Ela centraliza o
@@ -69,9 +81,10 @@ public:
      * * A implementação padrão calcula a mitigação usando o valor retornado por @c getDefesa(). 
      * Pode ser sobrescrita caso uma subclasse possua mecânicas únicas de imunidade ou escudos temporários.
      * * @param dano Valor bruto do dano direcionado à entidade.
+     * * @param tipoDaHabilidade Tipo de dano que será recebido. 
      * * @note O HP resultante nunca será reduzido abaixo de zero.
      */
-    virtual void receberDano(int dano);
+    virtual void receberDano(int dano, TipoHabilidade tipoDaHabilidade);
 
     /**
      * @brief Incrementa os pontos de vida (HP) atuais da entidade.
@@ -80,6 +93,29 @@ public:
      * * @param valor Quantidade de pontos de vida a serem restaurados.
      */
     virtual void receberCura(int valor);
+
+        /** * @brief Ativa a postura defensiva para o próximo ataque recebido.
+     * * Modifica o estado interno da flag @c _escudoAtivo para @c true, consumindo recursos de fadiga.
+     */
+    void usarEscudo();
+    
+    /**
+     * @brief Injeta e registra um novo efeito de dano por turno (DoT) na lista do personagem.
+     * * Cria uma instância de EfeitoDoT com os parâmetros fornecidos e a anexa ao vetor 
+     * de monitoramento de efeitos ativos. Exibe um aviso textual informando o status aplicado.
+     * * @param nome Nome do efeito/habilidade que gerou o dano contínuo.
+     * @param dano Quantidade de dano que será processada a cada ativação de rodada.
+     * @param duracao Quantidade total de turnos que o efeito persistirá ativo.
+     */
+    void aplicarDoT(std::string nome, int dano, int duracao);
+
+/**
+     * @brief Varre e processa todos os efeitos de dano por turno ativos no personagem.
+     * * Deve ser invocado obrigatoriamente no início da rodada do personagem (dentro de executarTurno).
+     * O método percorre o vetor de efeitos ativos, dispara a rotina receberDano para cada item, 
+     * decrementa o tempo de vida de cada DoT e remove da memória os efeitos cuja duração expirou.
+     */
+    void processarEfeitosContinuos();
 
     /** * @brief Retorna o valor de defesa ativo do personagem para cálculos de mitigação.
      * * Pode ser sobrescrito em subclasses para adicionar bônus temporários de equipamentos ou buffs.
@@ -100,6 +136,12 @@ protected:
     int _defesaBase;      ///< Atributo nativo de mitigação de dano físico.
     int _nivel;           ///< Nível de poder ou escala de atributos da entidade.
     int _forcaBase;       ///< Atributo nativo de dano físico.
+    bool _vivo;           ///< Indica se o Personagem esta vivo.
+
+/**
+     * @brief Vetor que armazena todos os efeitos de dano contínuo ativos no personagem.
+     */
+    std::vector<EfeitoDoT> _dotsAtivos;
 
 private: 
     std::vector<Habilidade> _habilidades; ///< Repositório privado e blindado contendo as técnicas da entidade.

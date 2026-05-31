@@ -45,7 +45,7 @@ public:
      * o escudo é desativado.
      * * @param dano Valor bruto do dano entrante.
      */
-    void receberDano(int dano) override;
+    void receberDano(int dano, TipoHabilidade tipoDaHabilidade) override;
 
     /** * @brief Calcula e retorna o valor de defesa total do herói.
      * * Realiza a soma aritmética da defesa base da classe com os bônus permanentes adquiridos.
@@ -72,10 +72,6 @@ public:
      */
     void consumirEnergia(int qtd);
 
-    /** * @brief Ativa a postura defensiva para o próximo ataque recebido.
-     * * Modifica o estado interno da flag @c _escudoAtivo para @c true, consumindo recursos de fadiga.
-     */
-    void usarEscudo();
     
     /** * @brief Consome uma carga do consumível de cura para restaurar vida instantaneamente.
      * * Verifica a disponibilidade de frascos. Se houver cargas, consome 1 unidade e invoca
@@ -153,7 +149,7 @@ private:
     int _xp;                    ///< Experiência acumulada no nível atual.
     int _xpProxNivel;           ///< Meta de experiência necessária para o próximo nível.
     int _idCenaCheckpoint;      ///< ID da cena mapeada como último ponto de descanso seguro visitado.
-    bool _escudoAtivo;          ///< Estado de postura defensiva ativa que mitiga o próximo golpe sofrido.
+
 
     std::vector<Habilidade> _habilidadesConhecidas; ///< Vetor que armazena o acervo de técnicas utilizáveis do jogador.
 
