@@ -159,9 +159,7 @@ void Aventureiro::executarTurno(Personagem& alvo) {
     }
 }
 
-void Aventureiro::receberDano(int dano, TipoHabilidade tipoDaHabilidade) {
-
-}
+void Aventureiro::receberDano(int dano, TipoHabilidade tipoDaHabilidade) {}
 int Aventureiro::getDefesa() const { return 0; }
 void Aventureiro::recuperarRecursos() {
     _energia = std::min(_energiaMax, _energia + 5); // +5 de Energia
