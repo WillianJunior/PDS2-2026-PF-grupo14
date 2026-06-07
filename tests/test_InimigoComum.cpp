@@ -58,13 +58,13 @@ TEST_SUITE("Inimigos Comun - Comportamento e Dano") {
         Goblin g("Goblin", 1);
         int hpAntes = g.getHP();
 
-        g.receberDano(20);
+        g.receberDano(20,TipoHabilidade::FISICO);
         CHECK(g.getHP() < hpAntes);
     }
 
     TEST_CASE("Goblin morre com dano letal") {
         Goblin g("Goblin", 1);
-        g.receberDano(9999);
+        g.receberDano(9999,TipoHabilidade::FISICO);
         CHECK(g.estaVivo() == false);
     }
 }

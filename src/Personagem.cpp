@@ -60,10 +60,7 @@ void Personagem::receberCura(int valor) {
     if (_hp > _hpMax) _hp = _hpMax;
 }
 
-void aplicarDoT(std::string nome, int dano, int duracao){
-
-
-}
+void Personagem::aplicarDoT(std::string nome, int dano, int duracao){(void)nome;(void)dano;(void)duracao;}
 
 void Personagem::processarEfeitosContinuos() {
     // SE O PERSONAGEM JÁ MORREU OU NÃO TEM NENHUM DOT NA LISTA:

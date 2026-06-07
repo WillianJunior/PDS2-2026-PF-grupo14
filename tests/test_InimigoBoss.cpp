@@ -50,19 +50,19 @@ TEST_SUITE("Dragao - Comportamento") {
         Dragao d;
         int hpAntes = d.getHP();
         
-        d.receberDano(50);
+        d.receberDano(50,TipoHabilidade::FISICO);
         CHECK(d.getHP() < hpAntes);
     }
 
     TEST_CASE("Dragao morre com dano letal - Status") {
         Dragao d;
-        d.receberDano(99999);
+        d.receberDano(99999,TipoHabilidade::FISICO);
         CHECK(d.estaVivo() == false);
     }
 
     TEST_CASE("Dragao morre com dano letal - Zerar HP") {
         Dragao d;
-        d.receberDano(99999);
+        d.receberDano(99999,TipoHabilidade::FISICO);
         CHECK(d.getHP() == 0);
     }
 }

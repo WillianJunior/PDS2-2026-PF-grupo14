@@ -80,6 +80,8 @@ public:
      * @return false Se não haviam mais frascos disponíveis no inventário.
      */
     bool usarFrasco();
+
+    void usarEscudo();
     
     /** * @brief Restaura completamente a saúde, recursos do herói e recarrega os frascos de cura.
      * * Utilizado em nós narrativos de descanso/tavernas para reestabelecer o estado do herói.
@@ -149,6 +151,7 @@ private:
     int _xp;                    ///< Experiência acumulada no nível atual.
     int _xpProxNivel;           ///< Meta de experiência necessária para o próximo nível.
     int _idCenaCheckpoint;      ///< ID da cena mapeada como último ponto de descanso seguro visitado.
+    bool _escudoAtivo;          ///< Variavel booleana que define a ativação do escudo.
 
 
     std::vector<Habilidade> _habilidadesConhecidas; ///< Vetor que armazena o acervo de técnicas utilizáveis do jogador.

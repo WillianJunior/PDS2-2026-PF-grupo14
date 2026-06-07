@@ -126,7 +126,7 @@ TEST_SUITE("Aventureiro - Escudo e Ações") {
         Aventureiro a("Herói", 100, 5, 15);
         a.usarEscudo();
         int hpAntes = a.getHP();
-        a.receberDano(30);
+        a.receberDano(30,TipoHabilidade::FISICO);
         CHECK(a.getHP() > hpAntes - 30);
     }
 
@@ -134,12 +134,12 @@ TEST_SUITE("Aventureiro - Escudo e Ações") {
         Aventureiro a1("Herói", 200, 5, 15);
         a1.usarEscudo();
         int hpAntes1 = a1.getHP();
-        a1.receberDano(30);
+        a1.receberDano(30,TipoHabilidade::FISICO);
         int danoComEscudo = hpAntes1 - a1.getHP();
 
         Aventureiro a2("Herói", 200, 5, 15);
         int hpAntes2 = a2.getHP();
-        a2.receberDano(30);
+        a2.receberDano(30,TipoHabilidade::FISICO);
         int danoSemEscudo = hpAntes2 - a2.getHP();
 
         // Valida as variáveis para sumir com os warnings e testar a mitigação

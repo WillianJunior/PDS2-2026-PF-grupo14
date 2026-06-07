@@ -49,19 +49,19 @@ TEST_SUITE("Bruxa - Comportamento") {
         Bruxa b("Bruxa", 3);
         int hpAntes = b.getHP();
         
-        b.receberDano(20);
+        b.receberDano(20,TipoHabilidade::FISICO);
         CHECK(b.getHP() < hpAntes);
     }
 
     TEST_CASE("Bruxa morre com dano letal - Status") {
         Bruxa b("Bruxa", 3);
-        b.receberDano(99999);
+        b.receberDano(99999,TipoHabilidade::FISICO);
         CHECK(b.estaVivo() == false);
     }
 
     TEST_CASE("Bruxa morre com dano letal - Zerar HP") {
         Bruxa b("Bruxa", 3);
-        b.receberDano(99999);
+        b.receberDano(99999,TipoHabilidade::FISICO);
         CHECK(b.getHP() == 0);
     }
 }
@@ -103,19 +103,19 @@ TEST_SUITE("GolemPedra - Comportamento") {
         GolemPedra gp("Golem", 4);
         int hpAntes = gp.getHP();
         
-        gp.receberDano(30);
+        gp.receberDano(30,TipoHabilidade::FISICO);
         CHECK(gp.getHP() < hpAntes);
     }
 
     TEST_CASE("GolemPedra morre com dano letal - Status") {
         GolemPedra gp("Golem", 4);
-        gp.receberDano(99999);
+        gp.receberDano(99999,TipoHabilidade::FISICO);
         CHECK(gp.estaVivo() == false);
     }
 
     TEST_CASE("GolemPedra morre com dano letal - Zerar HP") {
         GolemPedra gp("Golem", 4);
-        gp.receberDano(99999);
+        gp.receberDano(99999,TipoHabilidade::FISICO);
         CHECK(gp.getHP() == 0);
     }
 }
