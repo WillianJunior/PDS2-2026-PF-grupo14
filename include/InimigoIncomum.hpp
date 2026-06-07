@@ -23,7 +23,7 @@ public:
 
     void executarTurno(Personagem& alvo) override;
 
-    void receberDano(int dano) override;
+    void receberDano(int dano) {};
 };
 
 #endif // INIMIGOS_INCOMUNS_HPP
