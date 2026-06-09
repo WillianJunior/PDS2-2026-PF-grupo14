@@ -17,5 +17,4 @@ GolemPedra::GolemPedra(std::string nome, int nivel)
     : Inimigo(nome, 100 * nivel, 12 * nivel, 15 * nivel, nivel, 50 * nivel) {}
 
 void GolemPedra::executarTurno(Personagem& alvo) { (void)alvo; }
-void GolemPedra::receberDano(int dano, TipoHabilidade tipoDaHabilidade){(void)dano;(void)tipoDaHabilidade;}
 

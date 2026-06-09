@@ -22,8 +22,6 @@ public:
     GolemPedra(std::string nome, int nivel);
 
     void executarTurno(Personagem& alvo) override;
-
-    void receberDano(int dano,TipoHabilidade tipoDaHabilidade) override;
 };
 
 #endif // INIMIGOS_INCOMUNS_HPP

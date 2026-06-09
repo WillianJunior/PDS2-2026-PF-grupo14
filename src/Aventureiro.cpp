@@ -133,7 +133,7 @@ void Aventureiro::executarTurno(Personagem& alvo) {
                 // Ativa a postura defensiva que mitiga 50% de ataques comuns no turno do inimigo
                 if (this->_energia >= 5) {
                     this->consumirEnergia(5);
-                    this->_escudoAtivo = true; 
+                    this->usarEscudo();
                     InterfaceJogo::exibirTexto(this->getNome() + " ergue o escudo se preparando para o pior!");
                     acaoRealizada = true;
                 } else {
@@ -158,18 +158,21 @@ void Aventureiro::executarTurno(Personagem& alvo) {
         }
     }
 }
-
-void Aventureiro::receberDano(int dano, TipoHabilidade tipoDaHabilidade) {}
-int Aventureiro::getDefesa() const { return 0; }
+void Aventureiro::usarEscudo() {_escudoAtivo = true;}
+int Aventureiro::getDefesa() const { return _defesaBase; }
 void Aventureiro::recuperarRecursos() {
     _energia = std::min(_energiaMax, _energia + 5); // +5 de Energia
     _mp = std::min(_mpMax, _mp + 1);                // +1 de MP
     
     InterfaceJogo::exibirTexto("> Turno iniciado. Você recuperou 5 de Energia e 1 de MP.");
 }
-void Aventureiro::consumirMP(int qtd) { (void)qtd; }
-void Aventureiro::consumirEnergia(int qtd) { (void)qtd; }
-void Aventureiro::usarEscudo() {}
+void Aventureiro::consumirMP(int qtd) { 
+    if ((_mp - qtd) < 0){_mp = 0;}
+    else{_mp -= qtd;}    
+}
+void Aventureiro::consumirEnergia(int qtd) {     
+    if ((_energia - qtd) < 0){_energia = 0;}
+    else{_energia -= qtd;}    }
 bool Aventureiro::usarFrasco() { return false; }
 void Aventureiro::dormir() {
     _hp = _hpMax;           // Restaura a saúde
@@ -193,13 +196,13 @@ std::string Aventureiro::getDeclaracaoStatus() const { return ""; }
 // GETTERS E SETTERS DE ESTADO
 // ============================================================================
 
-int Aventureiro::getForcaTotal() const { return 0; }
-int Aventureiro::getIDCheckpoint() const { return 0; }
-void Aventureiro::setIDCheckpoint(int id) { (void)id; }
-int Aventureiro::getMP() const { return 0; }
-int Aventureiro::getMPMax() const { return 0; }
-int Aventureiro::getEnergia() const { return 0; }
-int Aventureiro::getEnergiaMax() const { return 0; }
+int Aventureiro::getForcaTotal() const { return _forcaBase*_bonusArma;}
+int Aventureiro::getIDCheckpoint() const { return _idCenaCheckpoint; }
+void Aventureiro::setIDCheckpoint(int id) { return ; }
+int Aventureiro::getMP() const { return _mp; }
+int Aventureiro::getMPMax() const { return _mpMax; }
+int Aventureiro::getEnergia() const { return _energia; }
+int Aventureiro::getEnergiaMax() const { return _energiaMax; }
 
 const std::vector<Habilidade>& Aventureiro::getHabilidades() const { 
     return _habilidadesConhecidas; 
