@@ -3,6 +3,7 @@
 
 #include "Aventureiro.hpp"
 #include "Cena.hpp"
+#include "InterfaceJogo.hpp"
 #include <map>
 #include <string>
 
@@ -53,6 +54,7 @@ public:
 
 private:
     Aventureiro& _player;              ///< Referência ao herói controlado pelo jogador.
+    InterfaceJogo _interface;         ///< Referencia à interface e suas funções.
     std::map<int, Cena> _roteiro;      ///< Dicionário que mapeia IDs únicos para suas respectivas Cenas.
     int _idCenaAtual;                  ///< ID indicador de qual cena está ativa no momento.
 
