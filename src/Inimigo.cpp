@@ -13,6 +13,11 @@ Inimigo::Inimigo(std::string nome, int hp, int defesa, int forca, int nivel, int
 
 void Inimigo::executarTurno(Personagem& alvo) { (void)alvo; }
 
-int Inimigo::getXPRecompensa() const { return 0; }
+int Inimigo::getXPRecompensa() const { 
+    return _xpRecompensa; 
+}
 
-std::string Inimigo::getDeclaracaoStatus() const { return ""; }
+std::string Inimigo::getDeclaracaoStatus() const {
+    return "[" + _nome + "] | Nível: " + std::to_string(_nivel) + 
+           " | HP: " + std::to_string(_hp) + "/" + std::to_string(_hpMax);
+}
