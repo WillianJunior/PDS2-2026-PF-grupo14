@@ -67,24 +67,21 @@ void MotorJogo::inicializarHistoria(){
     cena1.adicionarEscolha(escolha1B);
     
     // Insere no mapa do jogo
-    _roteiro.insert_or_assign(1, cena1);
-
-
+    _roteiro.insert(std::make_pair(1, cena1));
     // ==========================================
     // CENA 2: O Beco Com Combate (Cena de Transição)
     // ==========================================
     Cena cena2(2, "Após derrotar o Goblin no beco lamacento, você avista os portões da Vila Segura logo à frente.", false);
 
-    Escolha avançarBeco;
-    avançarBeco.texto = "Correr em direção aos portões da vila";
-    avançarBeco.destinoID = 3; // Encontra o outro caminho na Vila Segura
-    avançarBeco.geraCombate = false;
-    avançarBeco.tipoInimigo = "";
-    avançarBeco.itemGanhoID = 0;
+    Escolha avancarBeco;
+    avancarBeco.texto = "Correr em direção aos portões da vila";
+    avancarBeco.destinoID = 3; // Encontra o outro caminho na Vila Segura
+    avancarBeco.geraCombate = false;
+    avancarBeco.tipoInimigo = "";
+    avancarBeco.itemGanhoID = 0;
 
-    cena2.adicionarEscolha(avançarBeco);
-    _roteiro.insert_or_assign(2, cena2);
-
+    cena2.adicionarEscolha(avancarBeco);
+    _roteiro.insert(std::make_pair(2, cena2));
 
     // ==========================================
     // CENA 3: A Vila Segura (Cena de Checkpoint)
@@ -100,7 +97,7 @@ void MotorJogo::inicializarHistoria(){
     continuarJornada.itemGanhoID = 0;
 
     cena3.adicionarEscolha(continuarJornada);
-    _roteiro.insert_or_assign(3, cena3);
+    _roteiro.insert(std::make_pair(3, cena3));
 
 
     // ==========================================
@@ -109,7 +106,7 @@ void MotorJogo::inicializarHistoria(){
     // Cena sem escolhas adicionadas limpa o loop e encerra a execução no método rodar()
     Cena cena4(4, "Você chega ao topo da montanha e avista o horizonte. A prévia da sua jornada termina aqui por enquanto!", false);
     
-    _roteiro.insert_or_assign(4, cena4);;
+    _roteiro.insert(std::make_pair(4, cena4));
 }
 
 void MotorJogo::processarDerrota() {}
