@@ -38,14 +38,6 @@ public:
      * * @param alvo Referência à entidade hostil alvo das ações deste turno.
      */
     void executarTurno(Personagem& alvo) override;
-    
-    /** * @brief Aplica a redução de HP considerando os pontos de defesa e o estado do Escudo.
-     * * Sobrescreve o método base para verificar se a flag @c _escudoAtivo está ligada. Se estiver,
-     * o dano recebido sofre uma mitigação severa adicional antes de atingir o @c _hp. Ao fim do cálculo, 
-     * o escudo é desativado.
-     * * @param dano Valor bruto do dano entrante.
-     */
-    void receberDano(int dano, TipoHabilidade tipoDaHabilidade) override;
 
     /** * @brief Calcula e retorna o valor de defesa total do herói.
      * * Realiza a soma aritmética da defesa base da classe com os bônus permanentes adquiridos.
@@ -72,6 +64,10 @@ public:
      */
     void consumirEnergia(int qtd);
 
+    /** * @brief Ativa a postura defensiva para o próximo ataque recebido.
+     * * Modifica o estado interno da flag @c _escudoAtivo para @c true, consumindo recursos de fadiga.
+     */
+    void usarEscudo();
     
     /** * @brief Consome uma carga do consumível de cura para restaurar vida instantaneamente.
      * * Verifica a disponibilidade de frascos. Se houver cargas, consome 1 unidade e invoca
@@ -80,8 +76,6 @@ public:
      * @return false Se não haviam mais frascos disponíveis no inventário.
      */
     bool usarFrasco();
-
-    void usarEscudo();
     
     /** * @brief Restaura completamente a saúde, recursos do herói e recarrega os frascos de cura.
      * * Utilizado em nós narrativos de descanso/tavernas para reestabelecer o estado do herói.
@@ -151,8 +145,7 @@ private:
     int _xp;                    ///< Experiência acumulada no nível atual.
     int _xpProxNivel;           ///< Meta de experiência necessária para o próximo nível.
     int _idCenaCheckpoint;      ///< ID da cena mapeada como último ponto de descanso seguro visitado.
-    bool _escudoAtivo;          ///< Variavel booleana que define a ativação do escudo.
-
+    bool _escudoAtivo;          ///< Estado de postura defensiva ativa que mitiga o próximo golpe sofrido.
 
     std::vector<Habilidade> _habilidadesConhecidas; ///< Vetor que armazena o acervo de técnicas utilizáveis do jogador.
 

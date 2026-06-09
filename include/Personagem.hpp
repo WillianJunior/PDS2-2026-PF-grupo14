@@ -98,7 +98,7 @@ public:
      * * Modifica o estado interno da flag @c _escudoAtivo para @c true, consumindo recursos de fadiga.
      */
     void usarEscudo();
-    
+
     /**
      * @brief Injeta e registra um novo efeito de dano por turno (DoT) na lista do personagem.
      * * Cria uma instância de EfeitoDoT com os parâmetros fornecidos e a anexa ao vetor 
@@ -137,7 +137,7 @@ protected:
     int _nivel;           ///< Nível de poder ou escala de atributos da entidade.
     int _forcaBase;       ///< Atributo nativo de dano físico.
     bool _vivo;           ///< Indica se o Personagem esta vivo.
-
+    bool _escudoAtivo;    ///< Estado de postura defensiva ativa que mitiga o próximo golpe sofrido.
 /**
      * @brief Vetor que armazena todos os efeitos de dano contínuo ativos no personagem.
      */

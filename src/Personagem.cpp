@@ -48,11 +48,57 @@ const std::vector<Habilidade>& Personagem::getHabilidades() const {
 // ============================================================================
 
 void Personagem::receberDano(int dano, TipoHabilidade tipoDaHabilidade) {
-    int danoFinal = dano - getDefesa();
-    if (danoFinal < 0) danoFinal = 0;
+ // Evita o processamento caso o golpe tenha valor nulo ou negativo
+    if (dano <= 0) return;
+
+    // 1. MITIGAÇÃO POR DEFESA (Fórmula percentual para amortecer o dano)
+    float fatorMitigacao = 100.0f / (100.0f + this->_defesaBase);
+    float danoCalculado = dano * fatorMitigacao;
+
+    // 2. VERIFICAÇÃO DE ESCUDO ATIVO
+    if (this->_escudoAtivo) {
+        switch (tipoDaHabilidade) {
+            case TipoHabilidade::ULTRA:
+                // Ataques ULTRA perfuram a guarda completamente
+                InterfaceJogo::exibirTexto("[PERIGO] O ataque é do tipo ULTRA! O escudo foi completamente ignorado!");
+                break;
+
+            case TipoHabilidade::DOT:
+                // Efeitos contínuos agem de forma interna (veneno, sangramento), ignorando a barreira física
+                InterfaceJogo::exibirTexto("[EFEITO] O dano contínuo (DoT) agiu por baixo do escudo!");
+                break;
+
+            default:
+                // Ataques comuns (Físico, Especial) têm seu dano cortado pela metade
+                danoCalculado *= 0.5f;
+                InterfaceJogo::exibirTexto(this->getNome() + " posicionou o escudo e mitigou metade do impacto!");
+                break;
+        }
+    }
+
+    // 3. CONVERSÃO PARA INTEIRO E GARANTIA DE DANO MÍNIMO
+    int danoFinal = static_cast<int>(danoCalculado);
     
-    _hp -= danoFinal;
-    if (_hp < 0) _hp = 0;
+    // Se o dano bruto era positivo, o dano real deve ser de pelo menos 1 (evita dano zero se a defesa for muito alta)
+    if (danoFinal <= 0 && dano > 0) {
+        danoFinal = 1;
+    }
+
+    // 4. APLICAÇÃO DIRETAMENTE NO HP
+    this->_hp -= danoFinal;
+
+    // Feedback textual customizado dependendo de como o dano foi sofrido
+    if (tipoDaHabilidade == TipoHabilidade::DOT) {
+        InterfaceJogo::exibirTexto(this->getNome() + " sofreu " + std::to_string(danoFinal) + " de dano por efeito contínuo!");
+    } else {
+        InterfaceJogo::exibirTexto(this->getNome() + " recebeu " + std::to_string(danoFinal) + " de dano real!");
+    }
+
+    // 5. GERENCIAMENTO DO ESTADO VITAL (Morte)
+    if (this->_hp <= 0) {
+        this->_hp = 0;       // Trava de segurança para não exibir vida negativa no HUD
+        this->_vivo = false;  // Disjuntor que desliga as ações deste personagem no jogo
+    }
 }
 
 void Personagem::receberCura(int valor) {
@@ -60,16 +106,37 @@ void Personagem::receberCura(int valor) {
     if (_hp > _hpMax) _hp = _hpMax;
 }
 
-void Personagem::aplicarDoT(std::string nome, int dano, int duracao){(void)nome;(void)dano;(void)duracao;}
+void Personagem::aplicarDoT(std::string nome, int dano, int duracao) {
+    // 1. TRAVA DE SEGURANÇA
+    // Se o personagem já estiver morto, não faz sentido aplicar um efeito de dano contínuo.
+    if (!this->_vivo) return;
+
+    // 2. CRIAÇÃO E INSTANCIAÇÃO DO EFEITO
+    // Criamos uma variável do tipo 'EfeitoDoT' (a struct que declaramos no cabeçalho)
+    // e preenchemos os seus campos com os dados que o método recebeu por parâmetro.
+    EfeitoDoT novoDot;
+    novoDot.tipo = TipoHabilidade::DOT; // Define o tipo obrigatoriamente como DOT para a lógica do escudo
+    novoDot.danoPorTurno = dano;
+    novoDot.turnosRestantes = duracao;
+    novoDot.nomeEfeito = nome;
+
+    // 3. PERSISTÊNCIA NA MEMÓRIA
+    // Joga o efeito recém-criado para o final do vetor '_dotsAtivos'.
+    // A partir deste momento, o personagem "lembrará" que está sob esse efeito.
+    this->_dotsAtivos.push_back(novoDot);
+
+    // 4. FEEDBACK VISUAL
+    // Exibe na tela do jogo que o status foi aplicado com sucesso e por quanto tempo vai durar.
+    InterfaceJogo::exibirTexto("[STATUS] " + this->getNome() + " foi afetado por " + nome + 
+                               " (" + std::to_string(dano) + " de dano/turno por " + 
+                               std::to_string(duracao) + " turnos)!");
+}
 
 void Personagem::processarEfeitosContinuos() {
     // SE O PERSONAGEM JÁ MORREU OU NÃO TEM NENHUM DOT NA LISTA:
     // Sai da função imediatamente para economizar processamento.
     if (!this->_vivo || this->_dotsAtivos.empty()) return;
 
-    // CRIAMOS UM ITERADOR (it) PARA VARRER O VETOR DE DOTS:
-    // Usamos um laço 'while' em vez de um 'for' comum porque vamos deletar elementos 
-    // de dentro do vetor enquanto andamos por ele, e o 'while' nos dá controle total disso.
     auto it = this->_dotsAtivos.begin();
     
     while (it != this->_dotsAtivos.end()) {
@@ -125,7 +192,7 @@ int Personagem::getHPMax() const {
 }
 
 bool Personagem::estaVivo() const {
-    return _vivo;
+    return this->_hp > 0;
 }
 
 std::string Personagem::getNome() const {
