@@ -1,6 +1,7 @@
 #include "Personagem.hpp"
 #include "InterfaceJogo.hpp"
 #include <stdexcept>
+#include <iostream>
 
 // ============================================================================
 // CONSTRUTOR
@@ -71,6 +72,7 @@ void Personagem::receberDano(int dano, TipoHabilidade tipoDaHabilidade) {
             default:
                 // Ataques comuns (Físico, Especial) têm seu dano cortado pela metade
                 danoCalculado *= 0.5f;
+                std::cout << _escudoAtivo;
                 InterfaceJogo::exibirTexto(this->getNome() + " posicionou o escudo e mitigou metade do impacto!");
                 break;
         }
@@ -172,8 +174,6 @@ void Personagem::processarEfeitosContinuos() {
         }
     }
 }
-
-
 
 int Personagem::getDefesa() const {
     return _defesaBase;

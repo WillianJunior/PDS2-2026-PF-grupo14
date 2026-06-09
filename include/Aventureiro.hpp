@@ -18,6 +18,10 @@
  * Pontos de Magia (MP) e Energia. Ela também encapsula a lógica de ganho de experiência (XP),
  * subida de nível (*Level Up*), bônus permanentes de equipamentos (Armas/Armaduras), e controle de 
  * estado temporário (como a mitigação de dano por escudo).
+ * * @param nome Nome do avatar escolhido pelo jogador.
+    * @param hp Pontos de vida máximos iniciais.
+    * @param defesa Atributo de defesa física base.
+    * @param forca Atributo de força base que dita o dano físico.
  */
 class Aventureiro : public Personagem {
 public:
@@ -145,7 +149,6 @@ private:
     int _xp;                    ///< Experiência acumulada no nível atual.
     int _xpProxNivel;           ///< Meta de experiência necessária para o próximo nível.
     int _idCenaCheckpoint;      ///< ID da cena mapeada como último ponto de descanso seguro visitado.
-    bool _escudoAtivo;          ///< Estado de postura defensiva ativa que mitiga o próximo golpe sofrido.
 
     std::vector<Habilidade> _habilidadesConhecidas; ///< Vetor que armazena o acervo de técnicas utilizáveis do jogador.
 

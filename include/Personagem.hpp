@@ -94,10 +94,6 @@ public:
      */
     virtual void receberCura(int valor);
 
-        /** * @brief Ativa a postura defensiva para o próximo ataque recebido.
-     * * Modifica o estado interno da flag @c _escudoAtivo para @c true, consumindo recursos de fadiga.
-     */
-    void usarEscudo();
 
     /**
      * @brief Injeta e registra um novo efeito de dano por turno (DoT) na lista do personagem.

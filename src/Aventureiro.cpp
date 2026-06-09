@@ -10,16 +10,17 @@
 Aventureiro::Aventureiro(std::string nome, int hp, int defesa, int forca)
     : Personagem(nome, hp, defesa, forca, 1) { 
     
-    _energia = 100; _energiaMax = 100; _mp = 50; _mpMax = 50; _frascos = 3;
-    _bonusArma = 0; _bonusArmadura = 0; _xp = 0; _xpProxNivel = 100;
-    _idCenaCheckpoint = 0; _escudoAtivo = false;
-}
+    _forcaBase = forca; _defesaBase = defesa; _hp = hp;  _energia = 100; _energiaMax = 100; _mp = 50; _mpMax = 50; _frascos = 3;
+    _bonusArma = 1; _bonusArmadura = 1; _xp = 0; _xpProxNivel = 100;
+    _idCenaCheckpoint = 0; this->_escudoAtivo = false;
+    
+}  
 
 // ============================================================================
 // MÉTODOS DE COMBATE E AÇÕES (Estilo Esqueleto/TDD Red)
 // ============================================================================
 
-void Aventureiro::executarTurno(Personagem& alvo) {
+void Aventureiro::executarTurno(Personagem& alvo) { 
 // 1. GATILHO DE RODADA: Processa venenos e sangramentos acumulados antes de qualquer escolha
     this->processarEfeitosContinuos();
 
@@ -132,7 +133,6 @@ void Aventureiro::executarTurno(Personagem& alvo) {
             case 3: // 🛡️ ERGUER ESCUDO
                 // Ativa a postura defensiva que mitiga 50% de ataques comuns no turno do inimigo
                 if (this->_energia >= 5) {
-                    this->consumirEnergia(5);
                     this->usarEscudo();
                     InterfaceJogo::exibirTexto(this->getNome() + " ergue o escudo se preparando para o pior!");
                     acaoRealizada = true;
@@ -158,7 +158,11 @@ void Aventureiro::executarTurno(Personagem& alvo) {
         }
     }
 }
-void Aventureiro::usarEscudo() {_escudoAtivo = true;}
+void Aventureiro::usarEscudo() {
+    this->_escudoAtivo = true;
+    this->consumirEnergia(6);
+
+}
 int Aventureiro::getDefesa() const { return _defesaBase; }
 void Aventureiro::recuperarRecursos() {
     _energia = std::min(_energiaMax, _energia + 5); // +5 de Energia
@@ -188,7 +192,9 @@ void Aventureiro::dormir() {
 
 void Aventureiro::aprenderHabilidade(Habilidade hb) { (void)hb; }
 bool Aventureiro::ganharExperiencia(int qtd) { (void)qtd; return false; }
-void Aventureiro::buffArma(int valor) { (void)valor; }
+void Aventureiro::buffArma(int valor) { 
+    _bonusArma = 1 + (valor/100);  
+ }
 void Aventureiro::buffArmadura(int valor) { (void)valor; }
 std::string Aventureiro::getDeclaracaoStatus() const { return ""; }
 
@@ -203,7 +209,6 @@ int Aventureiro::getMP() const { return _mp; }
 int Aventureiro::getMPMax() const { return _mpMax; }
 int Aventureiro::getEnergia() const { return _energia; }
 int Aventureiro::getEnergiaMax() const { return _energiaMax; }
-
 const std::vector<Habilidade>& Aventureiro::getHabilidades() const { 
     return _habilidadesConhecidas; 
 }
