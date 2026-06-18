@@ -3,7 +3,6 @@
 
 #include "Personagem.hpp"
 #include "Habilidade.hpp"
-#include "Cena.hpp"
 #include <vector>
 #include <string>
 
@@ -44,6 +43,12 @@ public:
      */
     void executarTurno(Personagem& alvo) override;
 
+    /** * @brief Calcula e retorna o valor de defesa total do herói.
+     * * Realiza a soma aritmética da defesa base da classe com os bônus permanentes adquiridos.
+     * * @return int Valor consolidado de defesa (@c _defesaBase + @c _bonusArmadura).
+     */
+    int getDefesa() const override;
+
     /** * @brief Regenera passivamente uma fração de Mana (MP) e Energia.
      * * Método disparado automaticamente pelo ciclo de combate no início de cada rodada do jogador,
      * impedindo que o fluxo de batalha fique travado por falta de recursos básicos.
@@ -68,17 +73,32 @@ public:
      */
     void usarEscudo();
     
+    /** * @brief Consome uma carga do consumível de cura para restaurar vida instantaneamente.
+     * * Verifica a disponibilidade de frascos. Se houver cargas, consome 1 unidade e invoca
+     * o método @c receberCura() aplicando um valor fixo ou percentual.
+     * * @return true Se a cura foi aplicada com sucesso.
+     * @return false Se não haviam mais frascos disponíveis no inventário.
+     */
+    bool usarFrasco();
+    
     /** * @brief Restaura completamente a saúde, recursos do herói e recarrega os frascos de cura.
      * * Utilizado em nós narrativos de descanso/tavernas para reestabelecer o estado do herói.
      */
     void dormir();
 
+    /** * @brief Adiciona uma nova estrutura de habilidade ao grimório de conhecimentos do herói.
+     * * @param hb Instância da @c Habilidade a ser aprendida e disponibilizada nos menus de combate.
+     */
+    void aprenderHabilidade(Habilidade hb);
+
     /** * @brief Concede pontos de experiência ao herói e gerencia o evento de subida de nível.
      * * Acumula o valor recebido e verifica se o montante ultrapassou o limiar de @c _xpProxNivel.
      * Caso positivo, dispara internamente o método privado @c subirNivel().
      * * @param qtd Quantidade de experiência líquida concedida (geralmente vinda do @c Inimigo::getXPRecompensa()).
+     * @return true Se o herói subiu de nível nesta chamada.
+     * @return false Se a experiência foi acumulada sem alteração de nível.
      */
-    void ganharExperiencia(int qtd);
+    bool ganharExperiencia(int qtd);
 
     /** * @brief Incrementa permanentemente o bônus de dano de ataque por modificação de equipamento.
      * * @param valor Pontos de bônus ofensivo concedidos (ex: ao afiar uma espada em um evento).
@@ -100,6 +120,9 @@ public:
     // GETTERS E SETTERS DE ESTADO
     // ==========================================
 
+    /** @brief Retorna o poder de ataque total consolidado do herói (@c _forcaBase + @c _bonusArma). */
+    int getForcaTotal() const;
+
     /** @brief Retorna o ID da cena que serve como ponto de ressurreição ativo. */
     int getIDCheckpoint() const;
 
@@ -109,12 +132,11 @@ public:
     /** @brief Retorna uma referência constante para a lista de habilidades que o jogador possui. */
     const std::vector<Habilidade>& getHabilidades() const;
 
-    int getMP() const;                  ///< Retorna os pontos de Mana atuais.
-    int getMPMax() const;               ///< Retorna o limite máximo de pontos de Mana.
-    int getEnergia() const;             ///< Retorna os pontos de Energia atuais.
-    int getEnergiaMax() const;          ///< Retorna o limite máximo de pontos de Energia.
-    int getDefesa() const override;     ///< Retorna defesa com buffs de equipamentos.
-    int getForcaTotal() const override; ///< Retorna força com buffs de equipamentos.
+    int getMP() const;          ///< Retorna os pontos de Mana atuais.
+    int getMPMax() const;       ///< Retorna o limite máximo de pontos de Mana.
+    int getEnergia() const;     ///< Retorna os pontos de Energia atuais.
+    int getEnergiaMax() const;  ///< Retorna o limite máximo de pontos de Energia.
+
 private:
     int _energia;               ///< Pontos de fadiga física atuais.
     int _energiaMax;            ///< Capacidade máxima de armazenamento de fadiga.
@@ -127,7 +149,6 @@ private:
     int _xp;                    ///< Experiência acumulada no nível atual.
     int _xpProxNivel;           ///< Meta de experiência necessária para o próximo nível.
     int _idCenaCheckpoint;      ///< ID da cena mapeada como último ponto de descanso seguro visitado.
-    int _nivel;                 ///< Nivel atual do jogador.
 
     std::vector<Habilidade> _habilidadesConhecidas; ///< Vetor que armazena o acervo de técnicas utilizáveis do jogador.
 

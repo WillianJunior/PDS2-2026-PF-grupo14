@@ -72,6 +72,7 @@ void Personagem::receberDano(int dano, TipoHabilidade tipoDaHabilidade) {
             default:
                 // Ataques comuns (Físico, Especial) têm seu dano cortado pela metade
                 danoCalculado *= 0.5f;
+                std::cout << _escudoAtivo;
                 InterfaceJogo::exibirTexto(this->getNome() + " posicionou o escudo e mitigou metade do impacto!");
                 break;
         }
@@ -107,22 +108,6 @@ void Personagem::receberCura(int valor) {
     if (_hp > _hpMax) _hp = _hpMax;
 }
 
-void Personagem::aplicarBuff(std::string nome, std::string atributo, int valor, int duracao) {
-    if (duracao <= 0 || valor <= 0) return;
-    
-    // Insere o modificador positivo no vetor
-    _modificadoresAtivos.push_back({nome, atributo, valor, duracao});
-    std::cout << "> " << this->getNome() << " recebeu o Buff '" << nome << "' (+" << valor << " de " << atributo << ") por " << duracao << " turnos.\n";
-}
-
-void Personagem::aplicarDebuff(std::string nome, std::string atributo, int valor, int duracao) {
-    if (duracao <= 0 || valor <= 0) return;
-    
-    // Guarda o valor NEGATIVO para reduzir o atributo automaticamente na soma
-    _modificadoresAtivos.push_back({nome, atributo, -valor, duracao});
-    std::cout << "> " << this->getNome() << " sofreu o Debuff '" << nome << "' (-" << valor << " de " << atributo << ") por " << duracao << " turnos.\n";
-}
-
 void Personagem::aplicarDoT(std::string nome, int dano, int duracao) {
     // 1. TRAVA DE SEGURANÇA
     // Se o personagem já estiver morto, não faz sentido aplicar um efeito de dano contínuo.
@@ -131,16 +116,16 @@ void Personagem::aplicarDoT(std::string nome, int dano, int duracao) {
     // 2. CRIAÇÃO E INSTANCIAÇÃO DO EFEITO
     // Criamos uma variável do tipo 'EfeitoDoT' (a struct que declaramos no cabeçalho)
     // e preenchemos os seus campos com os dados que o método recebeu por parâmetro.
-    EfeitoPorTempo novoDot;
+    EfeitoDoT novoDot;
     novoDot.tipo = TipoHabilidade::DOT; // Define o tipo obrigatoriamente como DOT para a lógica do escudo
-    novoDot.valorPorTurno = dano;
+    novoDot.danoPorTurno = dano;
     novoDot.turnosRestantes = duracao;
     novoDot.nomeEfeito = nome;
 
     // 3. PERSISTÊNCIA NA MEMÓRIA
     // Joga o efeito recém-criado para o final do vetor '_dotsAtivos'.
     // A partir deste momento, o personagem "lembrará" que está sob esse efeito.
-    this->_efeitosAtivos.push_back(novoDot);
+    this->_dotsAtivos.push_back(novoDot);
 
     // 4. FEEDBACK VISUAL
     // Exibe na tela do jogo que o status foi aplicado com sucesso e por quanto tempo vai durar.
@@ -149,117 +134,49 @@ void Personagem::aplicarDoT(std::string nome, int dano, int duracao) {
                                std::to_string(duracao) + " turnos)!");
 }
 
-void Personagem::aplicarHoT(std::string nome, int cura, int duracao) {
-    // 1. TRAVA DE SEGURANÇA
-    // Se o personagem já estiver morto, não faz sentido aplicar cura contínua.
-    if (!this->_vivo) return;
-
-    // 2. CRIAÇÃO E INSTANCIAÇÃO DO EFEITO
-    EfeitoPorTempo novoHot;
-    novoHot.tipo = TipoHabilidade::HOT; // Define o tipo como HOT para a lógica do switch
-    novoHot.valorPorTurno = cura;
-    novoHot.turnosRestantes = duracao;
-    novoHot.nomeEfeito = nome;
-
-    // 3. PERSISTÊNCIA NA MEMÓRIA
-    this->_efeitosAtivos.push_back(novoHot);
-
-    // 4. FEEDBACK VISUAL
-    InterfaceJogo::exibirTexto("[STATUS] " + this->getNome() + " recebeu o efeito " + nome + 
-                               " (" + std::to_string(cura) + " de cura/turno por " + 
-                               std::to_string(duracao) + " turnos)!");
-}
-
 void Personagem::processarEfeitosContinuos() {
+    // SE O PERSONAGEM JÁ MORREU OU NÃO TEM NENHUM DOT NA LISTA:
+    // Sai da função imediatamente para economizar processamento.
+    if (!this->_vivo || this->_dotsAtivos.empty()) return;
 
-    if (!this->_vivo || this->_efeitosAtivos.empty()) return;
-
-    auto it = this->_efeitosAtivos.begin();
+    auto it = this->_dotsAtivos.begin();
     
-    while (it != this->_efeitosAtivos.end()) {
+    while (it != this->_dotsAtivos.end()) {
         
         // EXIBE NA TELA O FEEDBACK VISUAL DO RPG:
+        // Diz ao jogador qual efeito está machucando o personagem naquele instante.
         InterfaceJogo::exibirTexto("\n[EFEITO ATIVO] " + it->nomeEfeito + " está agindo em " + this->getNome() + "!");
         
-        // O GATILHO CRÍTICO REFORMULADO:
-        switch (it->tipo) {
-            case TipoHabilidade::DOT:
-                // DoT processa defesa e mitigações no HP
-                this->receberDano(it->valorPorTurno, TipoHabilidade::DOT);
-                break;
-                
-            case TipoHabilidade::HOT:
-                // HoT apenas incrementa o HP diretamente respeitando o HP Máximo
-                this->receberCura(it->valorPorTurno);
-                InterfaceJogo::exibirTexto(this->getNome() + " recuperou " + std::to_string(it->valorPorTurno) + " de HP por efeito contínuo!");
-                break;
-                
-            default:
-                break;
-        }
+        // O GATILHO CRÍTICO:
+        // Chamamos o método 'receberDano' original da classe. Passamos o valor guardado 
+        // no DoT e avisamos que o tipo é 'DOT'. O 'receberDano' vai processar a defesa, 
+        // ignorar o escudo e deduzir o HP do personagem bem aqui.
+        this->receberDano(it->danoPorTurno, TipoHabilidade::DOT);
         
         // CONTROLE DE TEMPO:
+        // Reduz em 1 o número de turnos que ainda restam para esse efeito sumir.
         it->turnosRestantes--;
 
         // SE O EFEITO CHEGOU AO FIM (ZEROU OS TURNOS):
         if (it->turnosRestantes <= 0) {
+            // Avisa o jogador que o personagem se livrou daquele efeito.
             InterfaceJogo::exibirTexto("O efeito de " + it->nomeEfeito + " em " + this->getNome() + " expirou.");
             
-            // REMOVE O EFEITO DO VETOR COM SEGURANÇA:
-            it = this->_efeitosAtivos.erase(it); 
+            // REMOVE O DOT DO VETOR COM SEGURANÇA:
+            // O 'erase' deleta o efeito da memória. Ele nos devolve a nova posição correta 
+            // para onde o iterador 'it' deve apontar, evitando que o ponteiro aponte para o além (lixo).
+            it = this->_dotsAtivos.erase(it); 
         } 
         // SE O EFEITO AINDA VAI DURAR MAIS TURNOS:
         else {
+            // Apenas avança o iterador para analisar o próximo DoT da lista na próxima repetição.
             ++it; 
         }
     }
-
-    std::vector<ModificadorAtributo> modificadoresRestantes;
-
-    for (auto& mod : _modificadoresAtivos) {
-        mod.turnosRestantes--; // Reduz 1 turno do efeito
-
-        if (mod.turnosRestantes > 0) {
-            // Se ainda tem turnos, mantém o efeito ativo para a próxima rodada
-            modificadoresRestantes.push_back(mod);
-        } else {
-            // Se chegou a 0, o efeito expirou neste exato momento
-            std::cout << "> O efeito '" << mod.nomeEfeito << "' aplicado em " << this->getNome() << " expirou.\n";
-        }
-    }
-
-    // Atualiza o vetor oficial apenas com os que não expiraram
-    _modificadoresAtivos = modificadoresRestantes;
 }
 
 int Personagem::getDefesa() const {
-    int defesaModificada = this->_defesaBase;
-
-    // Varre o vetor procurando modificadores aplicados especificamente à defesa
-    for (const auto& mod : _modificadoresAtivos) {
-        if (mod.atributo == "defesa") {
-            defesaModificada += mod.valor; // Soma o valor (se for debuff, mod.valor é negativo, então subtrai)
-        }
-    }
-
-    // Impede que a defesa fique menor que zero devido a debuffs pesados
-    return std::max(0, defesaModificada);}
-
-int Personagem::getForcaTotal() const {
-
-    int forcaModificada = this->_forcaBase;
-
-    // Aplica os modificadores de força ativos
-    for (const auto& mod : _modificadoresAtivos) {
-        if (mod.atributo == "forca") {
-            forcaModificada += mod.valor;
-        }
-    }
-
-    // Aplica o bônus multiplicador de arma que você já tinha no Aventureiro (se aplicável)
-    // Exemplo: return std::max(0, forcaModificada) * _bonusArma;
-    return std::max(0, forcaModificada);
-
+    return _defesaBase;
 }
 
 // ============================================================================
