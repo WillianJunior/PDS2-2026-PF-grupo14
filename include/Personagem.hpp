@@ -15,11 +15,23 @@
  * * Mantém os dados necessários para que efeitos como veneno, queimadura ou 
  * sangramento persistam na memória do alvo por múltiplos turnos.
  */
-struct EfeitoDoT {
-    TipoHabilidade tipo;       /**< Tipo do efeito (obrigatoriamente TipoHabilidade::DOT para ignorar escudos). */
-    int danoPorTurno;          /**< Quantidade de dano bruto que será infligida a cada rodada. */
-    int turnosRestantes;       /**< Contador de rodadas que o efeito ainda permanecerá ativo. */
-    std::string nomeEfeito;    /**< Nome identificador do efeito (ex: "Veneno Serpentino", "Sangramento"). */
+struct EfeitoPorTempo {
+    TipoHabilidade tipo;       /**< DOT, HOT, SUPORTE (Buff) ou DEBUFF */
+    int valorPorTurno;         /**< Dano, Cura ou o valor do modificador de atributo */
+    int turnosRestantes;       /**< Contador de rodadas ativo */
+    std::string nomeEfeito;    /**< Ex: "Veneno", "Regeneração", "Grito de Guerra" */
+    std::string atributoAfetado; /**< [NOVO] "hp", "defesa" ou "forca" (Útil para Buffs/Debuffs) */
+};
+
+/**
+ * @struct ModificadorAtributo
+ * @brief Estrutura que define um efeito de Buff ou Debuff ativo em um Personagem.
+ */
+struct ModificadorAtributo {
+    std::string nomeEfeito;   ///< Nome da habilidade que originou o modificador.
+    std::string atributo;     ///< O atributo alvo da alteração ("forca" ou "defesa").
+    int valor;                ///< Valor do modificador (positivo para Buff, negativo para Debuff).
+    int turnosRestantes;      ///< Contador de turnos até o efeito expirar.
 };
 
 /**
@@ -94,6 +106,23 @@ public:
      */
     virtual void receberCura(int valor);
 
+    /**
+    * @brief Aplica um modificador positivo (Buff) em um atributo específico do personagem.
+    * @param nome Nome do efeito/habilidade.
+    * @param atributo Atributo a ser inflado ("forca" ou "defesa").
+    * @param valor Quantidade de pontos a somar no atributo.
+    * @param duracao Duração do efeito em turnos.
+    */
+    void aplicarBuff(std::string nome, std::string atributo, int valor, int duracao);
+
+    /**
+    * @brief Aplica um modificador negativo (Debuff) reduzindo temporariamente um atributo.
+    * @param nome Nome do efeito/habilidade.
+    * @param atributo Atributo a ser mitigado ("forca" ou "defesa").
+    * @param valor Quantidade de pontos a subtrair do atributo.
+    * @param duracao Duração do efeito em turnos.
+    */
+    void aplicarDebuff(std::string nome, std::string atributo, int valor, int duracao); 
 
     /**
      * @brief Injeta e registra um novo efeito de dano por turno (DoT) na lista do personagem.
@@ -104,6 +133,16 @@ public:
      * @param duracao Quantidade total de turnos que o efeito persistirá ativo.
      */
     void aplicarDoT(std::string nome, int dano, int duracao);
+/**
+     * @brief Aplica com segurança um efeito de cura contínua (HoT - Heal over Time).
+     * * Cria e instancia um objeto do tipo @c EfeitoPorTempo configurado sob a categoria
+     * @c TipoHabilidade::HOT. O efeito é armazenado no repositório ativo e processado
+     * no início ou término de cada rodada do combate.
+     * * @param nome Nome identificador do efeito benéfico (ex: "Regeneração", "Bandagem Urgente").
+     * @param cura Quantidade fixa de pontos de vida (HP) que serão restaurados a cada ciclo.
+     * @param duracao Contador inicial de rodadas pelo qual o efeito permanecerá ativo.
+     */
+    void aplicarHoT(std::string nome, int cura, int duracao);
 
 /**
      * @brief Varre e processa todos os efeitos de dano por turno ativos no personagem.
@@ -118,6 +157,9 @@ public:
      * * @return int Valor de defesa utilizado no cálculo do dano sofrido.
      */
     virtual int getDefesa() const;
+
+    /** @brief Retorna o poder de ataque total consolidado do herói (@c _forcaBase + @c _bonusArma). */
+    virtual int getForcaTotal() const;
 
     int getHP() const;             ///< Retorna a quantidade de pontos de vida (HP) atuais.
     int getHPMax() const;          ///< Retorna o limite máximo de pontos de vida da entidade.
@@ -137,7 +179,8 @@ protected:
 /**
      * @brief Vetor que armazena todos os efeitos de dano contínuo ativos no personagem.
      */
-    std::vector<EfeitoDoT> _dotsAtivos;
+    std::vector<EfeitoPorTempo> _efeitosAtivos;
+    std::vector<ModificadorAtributo> _modificadoresAtivos;
 
 private: 
     std::vector<Habilidade> _habilidades; ///< Repositório privado e blindado contendo as técnicas da entidade.
