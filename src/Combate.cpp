@@ -1,71 +1,131 @@
 #include "Combate.hpp"
 #include "InterfaceJogo.hpp"
 #include <string>
+#include <stdexcept>
 
 // ============================================================================
-// CONSTRUTOR
+// CONSTRUTOR — VALIDAÇÃO DEFENSIVA DE ESTADO INICIAL
 // ============================================================================
 
 Combate::Combate(Aventureiro& jogador, Inimigo& inimigo)
-    : _jogador(jogador), _inimigo(inimigo), _turnoAtual(0) {
+    : _jogador(jogador), _inimigo(inimigo), _turnoAtual(0)
+{
+    // Programação defensiva: impede construção de Combate com estado inválido.
+    // Um combate com um combatente já derrotado nunca deveria acontecer.
+    if (!_jogador.estaVivo()) {
+        throw CombateInvalidoException(
+            "Impossível iniciar combate: o aventureiro '" +
+            _jogador.getNome() + "' já está derrotado.");
+    }
+
+    if (!_inimigo.estaVivo()) {
+        throw CombateInvalidoException(
+            "Impossível iniciar combate: o inimigo '" +
+            _inimigo.getNome() + "' já está derrotado.");
+    }
 }
 
 // ============================================================================
-// MÉTODOS PÚBLICOS E PRIVADOS
+// MÉTODO PRINCIPAL
 // ============================================================================
 
 bool Combate::iniciar() {
     renderizarInicioCombate();
 
-    // Loop principal baseado nas invariantes de vida
+    // Loop principal: continua enquanto ambos estiverem vivos
     while (verificarContinuacao()) {
         _turnoAtual++;
         renderizarInterfaceTurno();
 
-        // 1. Turno do Jogador
+        // --- Turno do Jogador ---
         turnoDoJogador();
 
-        // Se o inimigo morrer no turno do jogador, interrompe o loop
-        if (!verificarContinuacao()) {
-            break; 
-        }
+        // Verifica se o inimigo foi derrotado durante o turno do jogador
+        if (!verificarContinuacao()) break;
 
-        // 2. Turno do Inimigo
+        // --- Turno do Inimigo ---
         turnoDoInimigo();
     }
 
-    // Ao fim do loop, alguém morreu. Descobrimos quem foi.
     bool jogadorVenceu = _jogador.estaVivo();
-    
-    // Resolvemos as consequências (XP ou Game Over)
     renderizarFimCombate(jogadorVenceu);
-
     return jogadorVenceu;
 }
 
+// ============================================================================
+// TURNOS
+// ============================================================================
+
 void Combate::turnoDoJogador() {
-    _jogador.executarTurno(_inimigo);
+    // Proteção defensiva: não processa turno de combatente já morto
+    // (pode ter sido morto por DoT antes da vez dele)
+    if (!_jogador.estaVivo()) return;
+
+    try {
+        _jogador.executarTurno(_inimigo);
+    }
+    catch (const std::out_of_range& e) {
+        // Captura acesso inválido a índices de vetores (ex: menu de habilidades)
+        InterfaceJogo::exibirTexto(
+            "[SISTEMA] Erro de acesso a dado invalido: " +
+            std::string(e.what()) +
+            "\nSua acao foi cancelada. O turno passou.");
+    }
+    catch (const std::invalid_argument& e) {
+        // Captura entradas inválidas propagadas por métodos de combate
+        InterfaceJogo::exibirTexto(
+            "[SISTEMA] Acao invalida: " +
+            std::string(e.what()) +
+            "\nSua acao foi cancelada. O turno passou.");
+    }
+    catch (const std::exception& e) {
+        // Rede de segurança para qualquer outra exceção padrão inesperada
+        InterfaceJogo::exibirTexto(
+            "[SISTEMA - ERRO CRITICO] Falha inesperada no turno do jogador: " +
+            std::string(e.what()) +
+            "\nO turno foi encerrado forcadamente.");
+    }
 }
 
 void Combate::turnoDoInimigo() {
-    _inimigo.executarTurno(_jogador);
+    // Proteção defensiva: não processa turno de inimigo já morto
+    if (!_inimigo.estaVivo()) return;
+
+    try {
+        _inimigo.executarTurno(_jogador);
+    }
+    catch (const std::exception& e) {
+        // Erros de IA não devem travar o combate — são logados e ignorados
+        InterfaceJogo::exibirTexto(
+            "[SISTEMA] Falha na IA do inimigo '" + _inimigo.getNome() + "': " +
+            std::string(e.what()) +
+            "\nO turno do inimigo foi pulado.");
+    }
 }
 
-bool Combate::verificarContinuacao() {
-    // O combate continua apenas se AMBOS estiverem vivos
+// ============================================================================
+// VERIFICAÇÃO DE ESTADO
+// ============================================================================
+
+bool Combate::verificarContinuacao() const {
     return _jogador.estaVivo() && _inimigo.estaVivo();
 }
 
-void Combate::renderizarInterfaceTurno() {
+// ============================================================================
+// RENDERIZAÇÃO
+// ============================================================================
+
+void Combate::renderizarInterfaceTurno() const {
     InterfaceJogo::exibirTexto("\n===========================================");
     InterfaceJogo::exibirTexto("                 TURNO " + std::to_string(_turnoAtual));
     InterfaceJogo::exibirTexto("===========================================");
-    
-    // Mostra um resumo rápido do HP do monstro (status completo do herói já é exibido no turno dele)
-    InterfaceJogo::exibirTexto("-> " + _inimigo.getNome() + " [HP: " + std::to_string(_inimigo.getHP()) + "]");
+    InterfaceJogo::exibirTexto(
+        "-> " + _inimigo.getNome() +
+        " [HP: " + std::to_string(_inimigo.getHP()) +
+        "/" + std::to_string(_inimigo.getHPMax()) + "]");
 }
 
-void Combate::renderizarInicioCombate() {
+void Combate::renderizarInicioCombate() const {
     InterfaceJogo::exibirTexto("\n===========================================");
     InterfaceJogo::exibirTexto("             COMBATE INICIADO!");
     InterfaceJogo::exibirTexto("===========================================");
@@ -78,13 +138,23 @@ void Combate::renderizarFimCombate(bool jogadorVenceu) {
     InterfaceJogo::exibirTexto("===========================================");
 
     if (jogadorVenceu) {
-        InterfaceJogo::exibirTexto("Vitória! Você derrotou " + _inimigo.getNome() + ".");
-        
-        // Puxa a recompensa em XP da entidade Inimigo e aplica ao herói
+        InterfaceJogo::exibirTexto("Vitoria! Voce derrotou " + _inimigo.getNome() + ".");
+
         int xpGanha = _inimigo.getXPRecompensa();
         InterfaceJogo::exibirTexto("Recompensa: +" + std::to_string(xpGanha) + " XP.");
-        _jogador.ganharExperiencia(xpGanha);
+
+        // Proteção defensiva: ganharExperiencia também valida internamente (qtd <= 0),
+        if (xpGanha > 0) {
+            try {
+                _jogador.ganharExperiencia(xpGanha);
+            }
+            catch (const std::exception& e) {
+                InterfaceJogo::exibirTexto(
+                    "[SISTEMA] Falha ao conceder XP: " + std::string(e.what()));
+            }
+        }
     } else {
-        InterfaceJogo::exibirTexto("Derrota... A jornada de " + _jogador.getNome() + " termina aqui.");
+        InterfaceJogo::exibirTexto(
+            "Derrota... A jornada de " + _jogador.getNome() + " termina aqui.");
     }
 }
