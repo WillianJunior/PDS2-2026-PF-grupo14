@@ -28,6 +28,13 @@ enum class TipoHabilidade {
  * * A classe Habilidade encapsula todas as informações necessárias para que o sistema de combate
  * calcule custos de recursos (Energia/Mana) e gerencie a persistência de efeitos contínuos 
  * (como envenenamentos ou buffs por turno).
+ * * @param nome Nome identificador da habilidade (ex: "Bola de Fogo").
+     * @param tipo Categoria mecânica da ação (@see TipoHabilidade).
+     * @param custoE Quantidade de pontos de Energia consumidos pelo uso.
+     * @param custoM Quantidade de pontos de Mana (MP) consumidos pelo uso.
+     * @param valorBase Intensidade numérica base (pode representar dano, cura ou potência de efeito).
+     * @param duracao Quantidade de turnos que o efeito persiste no alvo. Por padrão é 0 (efeito instantâneo).
+     * @param atributoAfetado Em caso de Buffs ou Debuffs.
  */
 class Habilidade {
 public:

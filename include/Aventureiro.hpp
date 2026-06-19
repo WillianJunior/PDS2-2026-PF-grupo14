@@ -106,8 +106,6 @@ public:
     /** @brief Altera o ID da cena de salvamento ativo onde o jogador reaparecerá se morrer. */
     void setIDCheckpoint(int id);
 
-    /** @brief Retorna uma referência constante para a lista de habilidades que o jogador possui. */
-    const std::vector<Habilidade>& getHabilidades() const;
 
     int getMP() const;                  ///< Retorna os pontos de Mana atuais.
     int getMPMax() const;               ///< Retorna o limite máximo de pontos de Mana.
@@ -121,15 +119,11 @@ private:
     int _mp;                    ///< Pontos de energia mágica atuais.
     int _mpMax;                 ///< Capacidade máxima de armazenamento mágico.
     int _frascos;               ///< Quantidade restante de cargas de cura (limite base de 3).
-    int _forcaBase;             ///< Atributo nativo de ataque do personagem.
     int _bonusArma;             ///< Modificador de dano somado por melhoria de equipamento.
     int _bonusArmadura;         ///< Modificador de defesa somado por melhoria de equipamento.
     int _xp;                    ///< Experiência acumulada no nível atual.
     int _xpProxNivel;           ///< Meta de experiência necessária para o próximo nível.
     int _idCenaCheckpoint;      ///< ID da cena mapeada como último ponto de descanso seguro visitado.
-    int _nivel;                 ///< Nivel atual do jogador.
-
-    std::vector<Habilidade> _habilidadesConhecidas; ///< Vetor que armazena o acervo de técnicas utilizáveis do jogador.
 
     /** * @brief Executa as atualizações aritméticas de atributos ao subir de nível.
      * * Incrementa o nível, amplia as capacidades máximas de HP, MP e Energia, e restaura
