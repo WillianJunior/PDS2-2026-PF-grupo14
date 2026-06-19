@@ -10,7 +10,7 @@
 Aventureiro::Aventureiro(std::string nome, int hp, int defesa, int forca)
     : Personagem(nome, hp, defesa, forca, 1) { 
     
-    _forcaBase = forca; _defesaBase = defesa; _hp = hp;  _energia = 100; _energiaMax = 100; _mp = 50; _mpMax = 50; _frascos = 3;
+    _energia = 100; _energiaMax = 100; _mp = 50; _mpMax = 50; _frascos = 3;
     _bonusArma = 1; _bonusArmadura = 1; _xp = 0; _xpProxNivel = 60;
     _idCenaCheckpoint = 0; this->_escudoAtivo = false;
     
@@ -218,7 +218,7 @@ void Aventureiro::subirNivel() {
     // 2. Distribuição de Novas Habilidades em Níveis Específicos
     switch (this->_nivel) {
         case 2: {
-            Habilidade socoForte("Soco Forte", TipoHabilidade::FISICO, 3 , 0 , 30 , 0);
+            Habilidade socoForte("Soco Forte", TipoHabilidade::FISICO, 3 , 0 , 30 ,"", 0);
 
             
             this->adicionarHabilidade(socoForte);
@@ -226,7 +226,7 @@ void Aventureiro::subirNivel() {
             break;
         }
         case 4: {
-            Habilidade aplicarAdrenalina("Aplicar Adrenalina", TipoHabilidade::CURA, 2, 3, 50, 0);
+            Habilidade aplicarAdrenalina("Aplicar Adrenalina", TipoHabilidade::CURA, 2, 3, 50,"", 0);
           
             this->adicionarHabilidade(aplicarAdrenalina);
             InterfaceJogo::exibirTexto("[NOVA HABILIDADE] Você aprendeu: Escudo Divino!");
@@ -234,7 +234,7 @@ void Aventureiro::subirNivel() {
         }
         case 5: {
 
-            Habilidade ataqueMental("ATAQUE MENTAL", TipoHabilidade::ULTRA, 6 , 0 , 75 , 0);
+            Habilidade ataqueMental("ATAQUE MENTAL", TipoHabilidade::ULTRA, 6 , 0 , 75 ,"", 0);
 
             this->adicionarHabilidade(ataqueMental);
             InterfaceJogo::exibirTexto("[NOVA HABILIDADE] Você aprendeu: Meteoro Arcano!");
@@ -265,10 +265,10 @@ void Aventureiro::ganharExperiencia(int qtd) {
     }
 }
 void Aventureiro::buffArma(int valor) { 
-    _bonusArma = 1.0f + (static_cast<float>(valor) / 100.0f);
+    _bonusArma += 1.0f + (static_cast<float>(valor) / 100.0f);
  }
 void Aventureiro::buffArmadura(int valor) { 
-    _bonusArmadura = 1.0f + (static_cast<float>(valor) / 100.0f);
+    _bonusArmadura += 1.0f + (static_cast<float>(valor) / 100.0f);
 
  }
 std::string Aventureiro::getDeclaracaoStatus() const {
@@ -303,7 +303,8 @@ std::string Aventureiro::getDeclaracaoStatus() const {
 int Aventureiro::getForcaTotal() const { 
 // 1. Pega a força base somada/subtraída pelos Buffs/Debuffs de Personagem
     int forcaComEfeitos = Personagem::getForcaTotal();
-    
+    std::cout << "Personagem::getForcaTotal\n";
+
     // 2. Aplica o modificador permanente da arma do Aventureiro
     return forcaComEfeitos * _bonusArma;
 }
@@ -331,6 +332,4 @@ int Aventureiro::getEnergia() const {
     return _energia; }
 int Aventureiro::getEnergiaMax() const { 
     return _energiaMax; }
-const std::vector<Habilidade>& Aventureiro::getHabilidades() const { 
-    return _habilidadesConhecidas; 
-}
+

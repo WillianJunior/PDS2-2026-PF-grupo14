@@ -30,6 +30,7 @@ Personagem::Personagem(std::string nome, int hp, int defesa, int forca, int nive
     _defesaBase = defesa;
     _forcaBase = forca;
     _nivel = nivel;
+    _vivo = true;
 }
 
 // ============================================================================
@@ -172,7 +173,7 @@ void Personagem::aplicarHoT(std::string nome, int cura, int duracao) {
 
 void Personagem::processarEfeitosContinuos() {
 
-    if (!this->_vivo || this->_efeitosAtivos.empty()) return;
+    if (!this->_vivo) return;
 
     auto it = this->_efeitosAtivos.begin();
     
@@ -230,36 +231,35 @@ void Personagem::processarEfeitosContinuos() {
 
     // Atualiza o vetor oficial apenas com os que não expiraram
     _modificadoresAtivos = modificadoresRestantes;
+
 }
 
 int Personagem::getDefesa() const {
+
     int defesaModificada = this->_defesaBase;
 
-    // Varre o vetor procurando modificadores aplicados especificamente à defesa
     for (const auto& mod : _modificadoresAtivos) {
-        if (mod.atributo == "defesa") {
-            defesaModificada += mod.valor; // Soma o valor (se for debuff, mod.valor é negativo, então subtrai)
+        // Aceita "defesa", "Defesa" ou "DEFESA"
+        if (mod.atributo == "defesa" || mod.atributo == "Defesa" || mod.atributo == "DEFESA") {
+            defesaModificada += mod.valor;
         }
     }
 
-    // Impede que a defesa fique menor que zero devido a debuffs pesados
-    return std::max(0, defesaModificada);}
+    return std::max(0, defesaModificada);
+}
 
 int Personagem::getForcaTotal() const {
-
     int forcaModificada = this->_forcaBase;
 
-    // Aplica os modificadores de força ativos
     for (const auto& mod : _modificadoresAtivos) {
-        if (mod.atributo == "forca") {
+        // Aceita "forca", "Forca", "Força" ou "força"
+        if (mod.atributo == "forca" || mod.atributo == "Forca" || 
+            mod.atributo == "Força" || mod.atributo == "força") {
             forcaModificada += mod.valor;
         }
     }
 
-    // Aplica o bônus multiplicador de arma que você já tinha no Aventureiro (se aplicável)
-    // Exemplo: return std::max(0, forcaModificada) * _bonusArma;
     return std::max(0, forcaModificada);
-
 }
 
 // ============================================================================
