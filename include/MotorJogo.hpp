@@ -6,6 +6,7 @@
 #include "InterfaceJogo.hpp"
 #include <map>
 #include <string>
+#include <memory>
 
 // Forward declarations para evitar acoplamento desnecessário e inclusões circulares
 class Inimigo; 
@@ -57,7 +58,7 @@ private:
     InterfaceJogo _interface;         ///< Referencia à interface e suas funções.
     std::map<int, Cena> _roteiro;      ///< Dicionário que mapeia IDs únicos para suas respectivas Cenas.
     int _idCenaAtual;                  ///< ID indicador de qual cena está ativa no momento.
-
+    
     /**
      * @brief Instancia e popula o mapa do roteiro com todas as cenas e escolhas possíveis.
      * * Método chamado internamente no construtor para carregar os textos, ramificações de 
@@ -71,6 +72,11 @@ private:
      * @c _idCenaAtual para o último ponto de salvamento seguro (checkpoint) ou cena de recuperação.
      */
     void processarDerrota();
+
+    /**
+     * @brief instancia inimigo de acordo com o tipo pedido.
+     */
+    std::unique_ptr<Inimigo> criarInimigo(const std::string& tipoInimigo);
     
     /**
      * @brief Verifica e aplica bônus ou modificadores permanentes obtidos por escolhas narrativas.
