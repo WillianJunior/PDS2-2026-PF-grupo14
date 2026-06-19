@@ -1,121 +1,109 @@
 /**
  * @file test_InimigoIncomum.cpp
- * @brief Testes de unidade para Bruxa e GolemPedra usando doctest (TDD).
+ * @brief Testes de unidade para RecrutaDoutrinado, GuardaPatrimonial e SabotadorRival usando doctest (TDD).
  */
 
 #include "doctest.h"
 #include "InimigoIncomum.hpp"
 #include "Aventureiro.hpp"
+#include <stdexcept>
 
 // =========================================================
-// SUITE: Bruxa
+// SUITE: RecrutaDoutrinado
 // =========================================================
 
-TEST_SUITE("Bruxa - Estado Inicial") {
+TEST_SUITE("RecrutaDoutrinado - Estado Inicial e Comportamento") {
 
-    TEST_CASE("Bruxa começa viva") {
-        Bruxa b("Bruxa", 3);
-        CHECK(b.estaVivo() == true);
+    TEST_CASE("RecrutaDoutrinado inicia com status corretos") {
+        RecrutaDoutrinado r("Recruta 1", 3);
+        CHECK(r.estaVivo() == true);
+        CHECK(r.getHP() == 165); // 55 * 3
+        CHECK(r.getXPRecompensa() == 120); // 40 * 3
     }
 
-    TEST_CASE("Bruxa tem HP positivo") {
-        Bruxa b("Bruxa", 3);
-        CHECK(b.getHP() > 0);
+    TEST_CASE("RecrutaDoutrinado usa nome padrão se enviado vazio") {
+        RecrutaDoutrinado r("", 1);
+        CHECK(r.getNome() == "Recruta Doutrinado");
     }
 
-    TEST_CASE("Bruxa tem XP de recompensa positiva") {
-        Bruxa b("Bruxa", 3);
-        CHECK(b.getXPRecompensa() > 0);
-    }
-
-    TEST_CASE("Bruxa armazena nome corretamente") {
-        Bruxa b("Bruxa Sombria", 3);
-        CHECK(b.getNome() == "Bruxa Sombria");
-    }
-}
-
-TEST_SUITE("Bruxa - Comportamento") {
-
-    TEST_CASE("Bruxa causa dano ao aventureiro") {
+    TEST_CASE("RecrutaDoutrinado causa dano ao aventureiro") {
         Aventureiro a("Herói", 500, 0, 10);
-        Bruxa b("Bruxa", 3);
+        RecrutaDoutrinado r("Recruta 2", 3);
         int hpAntes = a.getHP();
         
-        b.executarTurno(a);
+        r.executarTurno(a);
         CHECK(a.getHP() < hpAntes);
     }
 
-    TEST_CASE("Bruxa recebe dano e HP diminui") {
-        Bruxa b("Bruxa", 3);
-        int hpAntes = b.getHP();
+    TEST_CASE("RecrutaDoutrinado morre com dano letal") {
+        RecrutaDoutrinado r("Recruta", 2);
+        r.receberDano(99999, TipoHabilidade::FISICO);
+        CHECK(r.estaVivo() == false);
+        CHECK(r.getHP() == 0);
+    }
+}
+
+// =========================================================
+// SUITE: GuardaPatrimonial
+// =========================================================
+
+TEST_SUITE("GuardaPatrimonial - Estado Inicial e Comportamento") {
+
+    TEST_CASE("GuardaPatrimonial inicia com status corretos") {
+        GuardaPatrimonial g("Guarda 1", 4);
+        CHECK(g.estaVivo() == true);
+        CHECK(g.getHP() == 260); // 65 * 4
+        CHECK(g.getXPRecompensa() == 180); // 45 * 4
+    }
+
+    TEST_CASE("GuardaPatrimonial recebe dano e HP diminui") {
+        GuardaPatrimonial g("Guarda 2", 2);
+        int hpAntes = g.getHP();
         
-        b.receberDano(20,TipoHabilidade::FISICO);
-        CHECK(b.getHP() < hpAntes);
+        g.receberDano(30, TipoHabilidade::FISICO);
+        CHECK(g.getHP() < hpAntes);
     }
 
-    TEST_CASE("Bruxa morre com dano letal - Status") {
-        Bruxa b("Bruxa", 3);
-        b.receberDano(99999,TipoHabilidade::FISICO);
-        CHECK(b.estaVivo() == false);
-    }
-
-    TEST_CASE("Bruxa morre com dano letal - Zerar HP") {
-        Bruxa b("Bruxa", 3);
-        b.receberDano(99999,TipoHabilidade::FISICO);
-        CHECK(b.getHP() == 0);
+    TEST_CASE("GuardaPatrimonial morre com dano letal") {
+        GuardaPatrimonial g("Guarda", 1);
+        g.receberDano(99999, TipoHabilidade::FISICO);
+        CHECK(g.estaVivo() == false);
+        CHECK(g.getHP() == 0);
     }
 }
 
 // =========================================================
-// SUITE: GolemPedra
+// SUITE: SabotadorRival
 // =========================================================
 
-TEST_SUITE("GolemPedra - Estado Inicial") {
+TEST_SUITE("SabotadorRival - Estado Inicial e Comportamento") {
 
-    TEST_CASE("GolemPedra começa vivo") {
-        GolemPedra gp("Golem", 4);
-        CHECK(gp.estaVivo() == true);
+    TEST_CASE("SabotadorRival inicia com status corretos") {
+        SabotadorRival s("Sabotador 1", 2);
+        CHECK(s.estaVivo() == true);
+        CHECK(s.getHP() == 50); // 25 * 2 (frágil)
+        CHECK(s.getXPRecompensa() == 120); // 60 * 2 (alta recompensa)
     }
 
-    TEST_CASE("GolemPedra tem HP positivo") {
-        GolemPedra gp("Golem", 4);
-        CHECK(gp.getHP() > 0);
-    }
-
-    TEST_CASE("GolemPedra tem XP de recompensa positiva") {
-        GolemPedra gp("Golem", 4);
-        CHECK(gp.getXPRecompensa() > 0);
-    }
-}
-
-TEST_SUITE("GolemPedra - Comportamento") {
-
-    TEST_CASE("GolemPedra causa dano ao aventureiro") {
+    TEST_CASE("SabotadorRival causa alto dano ao aventureiro") {
         Aventureiro a("Herói", 500, 0, 10);
-        GolemPedra gp("Golem", 4);
+        SabotadorRival s("Sabotador 2", 2);
         int hpAntes = a.getHP();
         
-        gp.executarTurno(a);
+        s.executarTurno(a);
         CHECK(a.getHP() < hpAntes);
     }
+}
 
-    TEST_CASE("GolemPedra recebe dano e HP diminui") {
-        GolemPedra gp("Golem", 4);
-        int hpAntes = gp.getHP();
-        
-        gp.receberDano(30,TipoHabilidade::FISICO);
-        CHECK(gp.getHP() < hpAntes);
-    }
+// =========================================================
+// SUITE: Proteções e Exceções Comuns
+// =========================================================
 
-    TEST_CASE("GolemPedra morre com dano letal - Status") {
-        GolemPedra gp("Golem", 4);
-        gp.receberDano(99999,TipoHabilidade::FISICO);
-        CHECK(gp.estaVivo() == false);
-    }
+TEST_SUITE("Inimigos Incomuns - Validações") {
 
-    TEST_CASE("GolemPedra morre com dano letal - Zerar HP") {
-        GolemPedra gp("Golem", 4);
-        gp.receberDano(99999,TipoHabilidade::FISICO);
-        CHECK(gp.getHP() == 0);
+    TEST_CASE("Lança exceção ao instanciar com nível inválido") {
+        CHECK_THROWS_AS(RecrutaDoutrinado("Erro", 0), std::invalid_argument);
+        CHECK_THROWS_AS(GuardaPatrimonial("Erro", -1), std::invalid_argument);
+        CHECK_THROWS_AS(SabotadorRival("Erro", -10), std::invalid_argument);
     }
 }

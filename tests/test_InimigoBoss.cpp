@@ -1,68 +1,77 @@
 /**
  * @file test_InimigoBoss.cpp
- * @brief Testes de unidade para a classe Dragao usando doctest (TDD).
+ * @brief Testes de unidade para a classe TylerDurden usando doctest (TDD).
  */
 
 #include "doctest.h"
 #include "InimigoBoss.hpp"
 #include "Aventureiro.hpp"
+#include <stdexcept>
 
-TEST_SUITE("Dragao - Estado Inicial") {
+TEST_SUITE("TylerDurden - Estado Inicial") {
 
-    TEST_CASE("Dragao é criado com nome correto") {
-        Dragao d("Dragão de Cinzas", 10);
-        CHECK(d.getNome() == "Dragão de Cinzas");
+    TEST_CASE("TylerDurden é criado com nome correto") {
+        TylerDurden t("Tyler Projetado", 2);
+        CHECK(t.getNome() == "Tyler Projetado");
     }
 
-    TEST_CASE("Dragao começa vivo") {
-        Dragao d;
-        CHECK(d.estaVivo() == true);
+    TEST_CASE("TylerDurden usa nome padrão se enviado vazio") {
+        TylerDurden t("", 1);
+        CHECK(t.getNome() == "Tyler Durden");
     }
 
-    TEST_CASE("Dragao tem HP positivo") {
-        Dragao d;
-        CHECK(d.getHP() > 0);
+    TEST_CASE("TylerDurden começa vivo") {
+        TylerDurden t("Tyler", 1);
+        CHECK(t.estaVivo() == true);
     }
 
-    TEST_CASE("Dragao tem XP de recompensa positiva") {
-        Dragao d;
-        CHECK(d.getXPRecompensa() > 0);
+    TEST_CASE("TylerDurden tem HP baseado no nível") {
+        TylerDurden t("Tyler", 1); // 150 * 1
+        CHECK(t.getHP() == 150);
+        
+        TylerDurden t2("Tyler Lvl 2", 2); // 150 * 2
+        CHECK(t2.getHP() == 300);
     }
 
-    TEST_CASE("Dragao tem nivel 10 por padrão") {
-        Dragao d;
-        CHECK(d.getNivel() == 10);
+    TEST_CASE("TylerDurden tem XP de recompensa proporcional") {
+        TylerDurden t("Tyler", 1); // 200 * 1
+        CHECK(t.getXPRecompensa() == 200);
+    }
+
+    TEST_CASE("TylerDurden lança exceção para nível inválido") {
+        CHECK_THROWS_AS(TylerDurden("Tyler", 0), std::invalid_argument);
+        CHECK_THROWS_AS(TylerDurden("Tyler", -5), std::invalid_argument);
     }
 }
 
-TEST_SUITE("Dragao - Comportamento") {
+TEST_SUITE("TylerDurden - Comportamento") {
 
-    TEST_CASE("Dragao causa dano ao aventureiro") {
+    TEST_CASE("TylerDurden causa dano ao aventureiro") {
         Aventureiro a("Herói", 1000, 0, 10);
-        Dragao d;
+        TylerDurden t("Tyler", 1);
         int hpAntes = a.getHP();
         
-        d.executarTurno(a);
+        t.executarTurno(a);
         CHECK(a.getHP() < hpAntes);
     }
 
-    TEST_CASE("Dragao recebe dano e HP diminui") {
-        Dragao d;
-        int hpAntes = d.getHP();
+    TEST_CASE("TylerDurden recebe dano e HP diminui") {
+        TylerDurden t("Tyler", 1);
+        int hpAntes = t.getHP();
         
-        d.receberDano(50,TipoHabilidade::FISICO);
-        CHECK(d.getHP() < hpAntes);
+        t.receberDano(30, TipoHabilidade::FISICO);
+        CHECK(t.getHP() < hpAntes);
     }
 
-    TEST_CASE("Dragao morre com dano letal - Status") {
-        Dragao d;
-        d.receberDano(99999,TipoHabilidade::FISICO);
-        CHECK(d.estaVivo() == false);
+    TEST_CASE("TylerDurden morre com dano letal - Status") {
+        TylerDurden t("Tyler", 1);
+        t.receberDano(9999, TipoHabilidade::FISICO);
+        CHECK(t.estaVivo() == false);
     }
 
-    TEST_CASE("Dragao morre com dano letal - Zerar HP") {
-        Dragao d;
-        d.receberDano(99999,TipoHabilidade::FISICO);
-        CHECK(d.getHP() == 0);
+    TEST_CASE("TylerDurden morre com dano letal - Zerar HP") {
+        TylerDurden t("Tyler", 1);
+        t.receberDano(9999, TipoHabilidade::FISICO);
+        CHECK(t.getHP() == 0);
     }
 }
