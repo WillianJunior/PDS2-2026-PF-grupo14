@@ -87,11 +87,10 @@ TEST_SUITE("Combate - Efeitos Colaterais") {
     }
 
     TEST_CASE("Jogador perde HP durante o combate contra Tyler Durden") {
-        Aventureiro a("Herói Frágil", 500, 0, 1);
+        Aventureiro a("Herói Frágil", 500, 1, 1);
         std::unique_ptr<Inimigo> tyler = std::make_unique<TylerDurden>("Tyler", 1);
         int hpAntes = a.getHP();
         Combate c(a, *tyler);
-
         c.iniciar();
         CHECK(a.getHP() < hpAntes);
     }

@@ -10,6 +10,7 @@
 #include "doctest.h"
 #include "MotorJogo.hpp"
 #include "Aventureiro.hpp"
+#include <iostream>
 
 // =========================================================
 // SUITE 1: Construção
@@ -229,6 +230,7 @@ TEST_SUITE("MotorJogo - Eventos Especiais via buffArma()") {
     TEST_CASE("buffArma() com valor zero não altera força") {
         Aventureiro a("Herói", 100, 5, 15);
         int forcaAntes = a.getForcaTotal();
+        std::cout << forcaAntes << "                                     csscscssssssssssssssssssssssssssssss" << std::endl;
         a.buffArma(0);
         CHECK(a.getForcaTotal() == forcaAntes);
     }

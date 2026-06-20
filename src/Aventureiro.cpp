@@ -11,7 +11,7 @@ Aventureiro::Aventureiro(std::string nome, int hp, int defesa, int forca)
     : Personagem(nome, hp, defesa, forca, 1) { 
     
     _energia = 100; _energiaMax = 100; _mp = 50; _mpMax = 50; _frascos = 3;
-    _bonusArma = 1; _bonusArmadura = 1; _xp = 0; _xpProxNivel = 60;
+    _bonusArma = 0; _bonusArmadura = 0; _xp = 0; _xpProxNivel = 60;
     _idCenaCheckpoint = 0; this->_escudoAtivo = false;
     
 }  
@@ -265,10 +265,14 @@ void Aventureiro::ganharExperiencia(int qtd) {
     }
 }
 void Aventureiro::buffArma(int valor) { 
-    _bonusArma += 1.0f + (static_cast<float>(valor) / 100.0f);
+
+    if (valor == 0) return;
+    _bonusArma += valor;
  }
 void Aventureiro::buffArmadura(int valor) { 
-    _bonusArmadura += 1.0f + (static_cast<float>(valor) / 100.0f);
+
+    if (valor == 0) return;
+    _bonusArmadura += valor;
 
  }
 std::string Aventureiro::getDeclaracaoStatus() const {
@@ -278,7 +282,7 @@ std::string Aventureiro::getDeclaracaoStatus() const {
     
     // Barras de Vida, Energia e MP
     status += "  ❤️ HP      : " + std::to_string(this->getHP()) + " / " + std::to_string(this->getHPMax()) + "\n";
-    status += "  ⚡ Energia : " + std::to_string(this->_energia) + " / " + std::to_string(this->_energiaMax) + "\n";
+    status += "  ⚡ Energia : S" + std::to_string(this->_energia) + " / " + std::to_string(this->_energiaMax) + "\n";
     status += "  🔮 MP      : " + std::to_string(this->_mp) + " / " + std::to_string(this->_mpMax) + "\n";
     
     status += "--------------------------------------------------\n";
@@ -294,6 +298,7 @@ std::string Aventureiro::getDeclaracaoStatus() const {
     status += "  ✨ XP      : " + std::to_string(this->_xp) + " / " + std::to_string(this->_xpProxNivel) + "\n";
     status += "==================================================";
 
+    //status = "";                                        //RETIRAR PARA FUNCIONAR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     return status; }
 
 // ============================================================================
@@ -303,10 +308,9 @@ std::string Aventureiro::getDeclaracaoStatus() const {
 int Aventureiro::getForcaTotal() const { 
 // 1. Pega a força base somada/subtraída pelos Buffs/Debuffs de Personagem
     int forcaComEfeitos = Personagem::getForcaTotal();
-    std::cout << "Personagem::getForcaTotal\n";
 
     // 2. Aplica o modificador permanente da arma do Aventureiro
-    return forcaComEfeitos * _bonusArma;
+    return forcaComEfeitos + _bonusArma;
 }
 
 int Aventureiro::getDefesa() const {
@@ -315,7 +319,7 @@ int Aventureiro::getDefesa() const {
     
     // 2. Aplica as regras exclusivas do Aventureiro (ex: multiplicador de armadura)
     // Se o seu _bonusArmadura for um multiplicador (ex: 1.20 para +20%):
-    return defesaComEfeitos * _bonusArmadura; 
+    return defesaComEfeitos + (_bonusArmadura); 
 }
 
 int Aventureiro::getIDCheckpoint() const { 

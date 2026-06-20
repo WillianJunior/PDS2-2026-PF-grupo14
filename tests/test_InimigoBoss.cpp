@@ -3,7 +3,7 @@
 
 #include "InimigoBoss.hpp"
 #include "Aventureiro.hpp"
-
+#include <iostream>
 TEST_SUITE("TylerDurden") {
 
     TEST_CASE("Construtor rejeita nivel invalido") {
@@ -60,7 +60,7 @@ TEST_SUITE("TylerDurden") {
         TylerDurden boss("Tyler", 1);
         Aventureiro alvo("Heroi", 100, 5, 10);
 
-        boss.receberDano(130, TipoHabilidade::FISICO);
+        boss.receberDano(300, TipoHabilidade::FISICO);
 
         int hpAntes = boss.getHP();
 
