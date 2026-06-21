@@ -1,5 +1,5 @@
 # ==========================================
-# MAKEFILE BÁSICO (MULTIPLATAFORMA + DOCTEST)
+# MAKEFILE COMPLETO (SISTEMA, TESTES + RUN)
 # ==========================================
 
 # Compilador
@@ -25,6 +25,7 @@ ifeq ($(OS),Windows_NT)
     MKDIR = if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
     RM = if exist $(BUILD_DIR) rmdir /s /q $(BUILD_DIR)
     TEST_EXE = $(BUILD_DIR)/exec_tests.exe
+    JOGO_EXE = $(BUILD_DIR)/jogo.exe
     
     # Cobertura no Windows: tenta usar 'python -m gcovr', se falhar tenta apenas 'gcovr'
     GCOVR_CMD = python -m gcovr --root . --exclude tests --print-summary || gcovr --root . --exclude tests --print-summary
@@ -34,6 +35,7 @@ else
     MKDIR = mkdir -p $(BUILD_DIR)
     RM = rm -rf $(BUILD_DIR)
     TEST_EXE = ./$(BUILD_DIR)/exec_tests.exe
+    JOGO_EXE = ./$(BUILD_DIR)/jogo
     
     # Cobertura no Linux: tenta 'python3 -m gcovr', depois 'python -m gcovr', e por fim 'gcovr' direto
     GCOVR_CMD = python3 -m gcovr --root . --exclude tests --print-summary || python -m gcovr --root . --exclude tests --print-summary || gcovr --root . --exclude tests --print-summary
@@ -44,10 +46,13 @@ endif
 # ARQUIVOS-FONTE
 # ==========================================
 
-# Remove o main.cpp do jogo para não conflitar com o main do doctest
+# Todos os arquivos do jogo (incluindo a main) para a execução real
+ALL_SRC_FILES = $(wildcard $(SRC_DIR)/*.cpp)
+
+# Remove o main.cpp do jogo para não conflitar com o main do doctest nos testes
 SRC_FILES = $(filter-out $(SRC_DIR)/main.cpp,$(wildcard $(SRC_DIR)/*.cpp))
 
-# Objetos do sistema
+# Objetos do sistema (para os testes)
 OBJ_FILES = $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SRC_FILES))
 
 # Arquivos de teste
@@ -61,10 +66,31 @@ TEST_OBJ = $(patsubst $(TEST_DIR)/%.cpp,$(BUILD_DIR)/test_%.o,$(TEST_FILES))
 # ==========================================
 
 all:
-	@echo "Rode: make test"
+	@echo "Comandos disponíveis:"
+	@echo "  make run           -> Compila e inicia a gameplay pela main"
+	@echo "  make test          -> Executa a suíte de testes com cobertura"
+	@echo "  make coverage-html -> Gera relatório visual em HTML"
+	@echo "  make clean         -> Remove a pasta de builds"
 
 # ==========================================
-# COMPILAÇÃO DOS .CPP DO SISTEMA
+# COMPILAÇÃO PRINCIPAL DO JOGO (GAMEPLAY)
+# ==========================================
+
+jogo: $(ALL_SRC_FILES)
+	@$(MKDIR)
+	@echo "Compilando o jogo principal a partir da main..."
+	$(CXX) $(CXXFLAGS) $(ALL_SRC_FILES) -o $(JOGO_EXE)
+	@echo "--------------------------------------------------------"
+	@echo "Jogo compilado com sucesso!"
+	@echo "--------------------------------------------------------"
+
+run: jogo
+	@echo "Iniciando o jogo..."
+	@echo ""
+	$(JOGO_EXE)
+
+# ==========================================
+# COMPILAÇÃO DOS .CPP DO SISTEMA (PARA TESTES)
 # ==========================================
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
@@ -84,7 +110,7 @@ $(BUILD_DIR)/test_%.o: $(TEST_DIR)/%.cpp
 # ==========================================
 
 test: $(OBJ_FILES) $(TEST_OBJ)
-	@echo "Linkando executavel..."
+	@echo "Linkando executavel de testes..."
 	$(CXX) $(CXXFLAGS) $(COVERAGE_FLAGS) $(OBJ_FILES) $(TEST_OBJ) -o $(TEST_EXE)
 	@echo ""
 	@echo "========================================================"
@@ -114,4 +140,4 @@ coverage-html: $(OBJ_FILES) $(TEST_OBJ)
 clean:
 	@$(RM)
 
-.PHONY: all test clean coverage-html
+.PHONY: all jogo run test clean coverage-html

@@ -54,8 +54,7 @@ void MotorJogo::rodar() {
             textosDasOpcoes.push_back(escolha.texto);
         }
 
-        const Escolha& escolhaFeita = opcoes.at(
-            _interface.solicitarEscolha(textosDasOpcoes));
+        const Escolha& escolhaFeita = opcoes.at((_interface.solicitarEscolha(textosDasOpcoes)-1));
 
         // Verifica se a escolha concede item
         checarEventosEspeciais(escolhaFeita);

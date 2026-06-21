@@ -287,3 +287,37 @@ TEST_SUITE("Aventureiro - Gerenciamento de Habilidades") {
         CHECK(a.getHabilidades().at(1).getCustoMP() == 15);
     }
 }
+
+// =========================================================
+// SUITE 7: FECHAMENTO DE COBERTURA 100% (GCOV FIX)
+// =========================================================
+TEST_SUITE("Aventureiro - Fechamento de Cobertura Gcov") {
+
+    TEST_CASE("Consumo Regular de Recursos (Caminho Else)") {
+        Aventureiro a("Herói", 100, 10, 10);
+        
+        // Testa o bloco 'else' de consumirMP (Linha 142)
+        int mpAntes = a.getMP();
+        a.consumirMP(5); 
+        CHECK(a.getMP() == mpAntes - 5);
+
+        // Testa o bloco 'else' de consumirEnergia (Linha 145)
+        int energiaAntes = a.getEnergia();
+        a.consumirEnergia(10);
+        CHECK(a.getEnergia() == energiaAntes - 10);
+    }
+
+    TEST_CASE("Alcançar Níveis Máximos de Progressão (Casos 4 e 5 do switch)") {
+        Aventureiro a("Herói Multi-Upar", 100, 10, 10);
+
+        // Nível 1 -> Nível 4 de uma vez só (Exige: 60 + 120 + 180 = 360 XP)
+        // Isso vai forçar o switch a ler o 'case 4' (Escudo Divino)
+        a.ganharExperiencia(400); 
+        CHECK(a.getNivel() == 4);
+
+        // Nível 4 -> Nível 5 (Exige mais 240 XP)
+        // Isso vai forçar o switch a ler o 'case 5' (Meteoro Arcano)
+        a.ganharExperiencia(250);
+        CHECK(a.getNivel() == 5);
+    }
+}

@@ -17,7 +17,4 @@ int Inimigo::getXPRecompensa() const {
     return _xpRecompensa; 
 }
 
-std::string Inimigo::getDeclaracaoStatus() const {
-    return "[" + _nome + "] | Nível: " + std::to_string(_nivel) + 
-           " | HP: " + std::to_string(_hp) + "/" + std::to_string(_hpMax);
-}
+std::string Inimigo::getDeclaracaoStatus() const {}
