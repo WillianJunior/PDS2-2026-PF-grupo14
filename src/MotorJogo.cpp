@@ -331,6 +331,90 @@ void MotorJogo::inicializarHistoria() {
     cena8.adicionarEscolha(escolha8A);
     _roteiro.insert(std::make_pair(8, cena8));
 
+     // =========================================================================
+    // CENA 9: Nasce o Projeto Mayhem (Checkpoint)
+    // =========================================================================
+    Cena cena9(9,
+        "\n==================================================\n"
+        "                   PROJETO MAYHEM            \n"
+        "==================================================\n"
+        "Tyler reúne os membros mais fiéis e anuncia uma nova fase: \n"
+        "tarefas, missões de sabotagem, uma estrutura quase militar. \n"
+        "Ninguém faz perguntas — perguntar não é permitido. Você \n"
+        "recebe sua primeira missão.\n"
+        "--------------------------------------------------", true);
+
+    Escolha escolha9A;
+    escolha9A.texto       = "Aplicar a doutrina do clube em um recruta hesitante";
+    escolha9A.destinoID   = 10;
+    escolha9A.geraCombate = true;
+    escolha9A.tipoInimigo = "RecrutaDoutrinado";
+    escolha9A.itemGanhoID = 103;
+
+    Escolha escolha9B;
+    escolha9B.texto       = "Invadir um prédio corporativo vigiado";
+    escolha9B.destinoID   = 11;
+    escolha9B.geraCombate = true;
+    escolha9B.tipoInimigo = "GuardaPatrimonial";
+    escolha9B.itemGanhoID = 104;
+
+    Escolha escolha9C;
+    escolha9C.texto       = "Eliminar um sabotador rival que ameaça o Projeto";
+    escolha9C.destinoID   = 12;
+    escolha9C.geraCombate = true;
+    escolha9C.tipoInimigo = "SabotadorRival";
+    escolha9C.itemGanhoID = 105;
+
+    cena9.adicionarEscolha(escolha9A);
+    cena9.adicionarEscolha(escolha9B);
+    cena9.adicionarEscolha(escolha9C);
+    _roteiro.insert(std::make_pair(9, cena9));
+
+    // =========================================================================
+    // CENA 10: Missão — Doutrinação
+    // =========================================================================
+    Cena cena10(10,
+        "\n==================================================\n"
+        "                       DOUTRINAÇÃO           \n"
+        "==================================================\n"
+        "O recruta cai, mas se levanta orgulhoso, repetindo as regras \n"
+        "do clube como um mantra. Você percebe o quanto essas pessoas \n"
+        "estão dispostas a obedecer sem questionar — e isso te \n"
+        "incomoda mais do que devia.\n"
+        "--------------------------------------------------", false);
+
+    Escolha escolha10A;
+    escolha10A.texto       = "Voltar à casa e procurar Tyler";
+    escolha10A.destinoID   = 13;
+    escolha10A.geraCombate = false;
+    escolha10A.tipoInimigo = "";
+    escolha10A.itemGanhoID = 0;
+
+    cena10.adicionarEscolha(escolha10A);
+    _roteiro.insert(std::make_pair(10, cena10));
+
+    // =========================================================================
+    // CENA 11: Missão — Alvo Corporativo
+    // =========================================================================
+    Cena cena11(11,
+        "\n==================================================\n"
+        "                       INFILTRAÇÃO          \n"
+        "==================================================\n"
+        "O guarda patrimonial luta com a determinação de quem só está \n"
+        "fazendo o trabalho dele. Depois de vencê-lo, você encontra \n"
+        "documentos que revelam o verdadeiro alcance dos planos do \n"
+        "Projeto Mayhem — muito maior do que você imaginava.\n"
+        "--------------------------------------------------", false);
+
+    Escolha escolha11A;
+    escolha11A.texto       = "Voltar à casa e procurar Tyler";
+    escolha11A.destinoID   = 13;
+    escolha11A.geraCombate = false;
+    escolha11A.tipoInimigo = "";
+    escolha11A.itemGanhoID = 0;
+
+    cena11.adicionarEscolha(escolha11A);
+    _roteiro.insert(std::make_pair(11, cena11));
 }
 
 void MotorJogo::processarDerrota() {
