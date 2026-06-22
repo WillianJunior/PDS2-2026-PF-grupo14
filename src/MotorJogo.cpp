@@ -487,7 +487,20 @@ void MotorJogo::inicializarHistoria() {
     cena14.adicionarEscolha(escolha14A);
     _roteiro.insert(std::make_pair(14, cena14));
 
+        // =========================================================================
+    // CENA 15: Liberdade (Final)
+    // =========================================================================
+    Cena cena15(15,
+        "\n==================================================\n"
+        "                  FIM DA JORNADA                  \n"
+        "==================================================\n"
+        "De mãos dadas com Marla, você observa os prédios ao redor \n"
+        "começarem a cair, um a um, no horizonte. Pela primeira vez em \n"
+        "muito tempo, a mente está silenciosa. O que vem a seguir é \n"
+        "incerto — mas, enfim, é só seu.\n"
+        "==================================================\n", false);
 
+    _roteiro.insert(std::make_pair(15, cena15));
 }
 
 void MotorJogo::processarDerrota() {
