@@ -89,11 +89,17 @@ void Personagem::receberDano(int dano, TipoHabilidade tipoDaHabilidade) {
     // 4. APLICAÇÃO DIRETAMENTE NO HP
     this->_hp -= danoFinal;
 
-    // Feedback textual customizado dependendo de como o dano foi sofrido
+ // ============================================================================
+    // FEEDBACK VISUAL DE INTERRUPÇÃO DE VIDA (DANO)
+    // ============================================================================
     if (tipoDaHabilidade == TipoHabilidade::DOT) {
-        InterfaceJogo::exibirTexto(this->getNome() + " sofreu " + std::to_string(danoFinal) + " de dano por efeito contínuo!");
+        InterfaceJogo::exibirTexto("\n  ┌───────────────────────────────────────────────────┐");
+        InterfaceJogo::exibirTexto("  🤢 [EFEITO CONTÍNUO] " + this->getNome() + " sofreu: -" + std::to_string(danoFinal) + " HP");
+        InterfaceJogo::exibirTexto("  └───────────────────────────────────────────────────┘\n");
     } else {
-        InterfaceJogo::exibirTexto(this->getNome() + " recebeu " + std::to_string(danoFinal) + " de dano real!");
+        InterfaceJogo::exibirTexto("\n  ━━━━━━ DANO ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        InterfaceJogo::exibirTexto("  💥 [IMPACTO] " + this->getNome() + " recebeu: -" + std::to_string(danoFinal) + " HP (Dano Real)");
+        InterfaceJogo::exibirTexto("  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
     }
 
     // 5. GERENCIAMENTO DO ESTADO VITAL (Morte)
@@ -262,6 +268,13 @@ int Personagem::getForcaTotal() const {
     return std::max(0, forcaModificada);
 }
 
+void Personagem::limparEfeitosTemporarios() {
+    // 1. Limpa os vetores de efeitos contínuos e modificadores
+    this->_efeitosAtivos.clear();
+    this->_modificadoresAtivos.clear();
+
+    // 2. Desativa estados de postura de combate
+    this->_escudoAtivo = false;}
 // ============================================================================
 // GETTERS
 // ============================================================================

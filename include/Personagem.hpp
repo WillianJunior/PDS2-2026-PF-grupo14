@@ -152,6 +152,12 @@ public:
      */
     void processarEfeitosContinuos();
 
+/**
+     * @brief Remove todos os DoTs, HoTs, Buffs e Debuffs ativos de um combate passado.
+     * @note Deve ser chamado impreterivelmente ao finalizar qualquer confronto.
+     */
+    void limparEfeitosTemporarios();
+
     /** * @brief Retorna o valor de defesa ativo do personagem para cálculos de mitigação.
      * * Pode ser sobrescrito em subclasses para adicionar bônus temporários de equipamentos ou buffs.
      * * @return int Valor de defesa utilizado no cálculo do dano sofrido.
