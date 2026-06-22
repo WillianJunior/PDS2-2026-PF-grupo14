@@ -111,31 +111,44 @@ std::unique_ptr<Inimigo> MotorJogo::criarInimigo(const std::string& tipoInimigo)
 }
 
 void MotorJogo::inicializarHistoria() {
-    // ==========================================
-    // CENA 1: A Taverna (Nó Inicial)
-    // ==========================================
+
+    std::unordered_map<int, std::string> nomesItens = {
+    {101, "Cartão do Tyler Durden"},
+    {102, "Sabonete Caseiro"},
+    {103, "Kit de Primeiros Socorros"}
+    };
+
+    // =========================================================================
+    // CENA 1: A Exaustão Inicial
+    // =========================================================================
     Cena cena1(1,
-        "Você acorda em uma taverna escura. O estalajadeiro aponta para a porta "
-        "dos fundos e diz que há problemas nos arredores. O que você faz?", false);
+        "\n==================================================\n"
+        "                   INSÔNIA CRÔNICA            \n"
+        "==================================================\n"
+        "Faz semanas que você não dorme de verdade. Os dias se \n"
+        "misturam em reuniões, fotocópias e um vazio que nenhum \n"
+        "trabalho preenche. Você sente que precisa de alguma saída \n"
+        "antes que a exaustão te apague por completo.\n"
+        "--------------------------------------------------", true);
 
     Escolha escolha1A;
-    escolha1A.texto      = "Sair pela porta dos fundos em direção ao beco";
-    escolha1A.destinoID  = 2;
-    escolha1A.geraCombate = true;
-    escolha1A.tipoInimigo = "DesafianteDoBar";
+    escolha1A.texto       = "Procurar um grupo de apoio só para conseguir dormir";
+    escolha1A.destinoID   = 2;
+    escolha1A.geraCombate = false;
+    escolha1A.tipoInimigo = "";
     escolha1A.itemGanhoID = 0;
 
     Escolha escolha1B;
-    escolha1B.texto      = "Conversar com o estalajadeiro e pedir suprimentos";
-    escolha1B.destinoID  = 3;
-    escolha1B.geraCombate = false;
-    escolha1B.tipoInimigo = "";
-    escolha1B.itemGanhoID = 101;
+    escolha1B.texto       = "Afogar as mágoas em um bar barato no fim da rua";
+    escolha1B.destinoID   = 3;
+    escolha1B.geraCombate = true;
+    escolha1B.tipoInimigo = "TrabalhadorNoturno";
+    escolha1B.itemGanhoID = 0;
 
     cena1.adicionarEscolha(escolha1A);
     cena1.adicionarEscolha(escolha1B);
     _roteiro.insert(std::make_pair(1, cena1));
-
+    
     // ==========================================
     // CENA 2: O Beco (Pós-combate)
     // ==========================================
