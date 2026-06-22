@@ -93,24 +93,21 @@ TylerDurden::TylerDurden(std::string nome, int nivel)
 // EXECUÇÃO DE TURNO — SISTEMA DE FASES + ARSENAL COMPLETO
 // ============================================================================
 
+
 void TylerDurden::executarTurno(Personagem& alvo) {
     if (!alvo.estaVivo()) return;
 
     processarEfeitosContinuos();
     if (!estaVivo()) return;
 
-    // Pré-condição defensiva: HPMax deve ser positivo para evitar divisão por zero
+    // Pré-condições defensivas
     if (_hpMax <= 0) {
-        throw std::logic_error(
-            "TylerDurden::executarTurno — _hpMax invalido: "
-            + std::to_string(_hpMax));
+        throw std::logic_error("TylerDurden::executarTurno — _hpMax invalido: " + std::to_string(_hpMax));
     }
     if (alvo.getHPMax() <= 0) {
-        throw std::logic_error(
-            "TylerDurden::executarTurno — HPMax do alvo invalido: "
-            + std::to_string(alvo.getHPMax()));
+        throw std::logic_error("TylerDurden::executarTurno — HPMax do alvo invalido: " + std::to_string(alvo.getHPMax()));
     }
-
+    
     _contadorTurnos++;
 
     // ── GATILHO GLOBAL: Cura Estóica (Tyler < 20% HP, apenas 1 vez) ──────────
