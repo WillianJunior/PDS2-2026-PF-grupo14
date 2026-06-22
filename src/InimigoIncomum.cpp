@@ -270,3 +270,46 @@ void SabotadorRival::executarTurno(Personagem& alvo) {
         _nome + " derrama ácido — Queimadura Química aplicada!");
     alvo.aplicarDoT("Queimadura Química", 5 * _nivel, 3);
 }
+
+// ============================================================================
+// MÉTODOS GETDECLARACAOSTATUS (MÉTODOS VIRTUAIS)
+// ============================================================================
+
+std::string RecrutaDoutrinado::getDeclaracaoStatus() const {
+    std::string status = "📢 [INIMIGO INCOMUM: Recruta] 📢\n";
+    status += "=======================================================\n";
+    status += " 👤 NOME : " + this->getNome() + " [Nível " + std::to_string(this->getNivel()) + "]\n";
+    status += " ⚔️ ESTILO: Pressão Física Crítica (Buffs/Debuffs de Turno)\n";
+    status += "=======================================================\n";
+    status += " ❤️ HP    : " + std::to_string(_hp) + " / " + std::to_string(_hpMax) + "\n";
+    status += " ⚔️ FORÇA : " + std::to_string(_forcaBase) + "\n";
+    status += " 🛡️ DEFESA: " + std::to_string(_defesaBase) + " (Alta Resistência)\n";
+    status += "=======================================================";
+    return status;
+}
+
+std::string GuardaPatrimonial::getDeclaracaoStatus() const {
+    std::string status = "🛡️ 🚨 [INIMIGO INCOMUM: Guarda] 🛡️\n";
+    status += "=======================================================\n";
+    status += " 👤 NOME : " + this->getNome() + " [Nível " + std::to_string(this->getNivel()) + "]\n";
+    status += " ⚕️ EXTRA : Kit de Primeiros Socorros & Controle de Área\n";
+    status += "=======================================================\n";
+    status += " ❤️ HP    : " + std::to_string(_hp) + " / " + std::to_string(_hpMax) + "\n";
+    status += " ⚔️ FORÇA : " + std::to_string(_forcaBase) + "\n";
+    status += " 🛡️ DEFESA: " + std::to_string(_defesaBase) + " (Blindagem Balística)\n";
+    status += "=======================================================";
+    return status;
+}
+
+std::string SabotadorRival::getDeclaracaoStatus() const {
+    std::string status = "💣 🔥 [INIMIGO INCOMUM: Sabotador] 🔥 💣\n";
+    status += "=======================================================\n";
+    status += " 👤 NOME : " + this->getNome() + " [Nível " + std::to_string(this->getNivel()) + "]\n";
+    status += " 🚨 ALERTA: Alto Dano Elemental (Foco em Queimaduras e ULTRA)\n";
+    status += "=======================================================\n";
+    status += " ❤️ HP    : " + std::to_string(_hp) + " / " + std::to_string(_hpMax) + " (Frágil)\n";
+    status += " ⚔️ FORÇA : " + std::to_string(_forcaBase) + " (Dano Explosivo Puro)\n";
+    status += " 🛡️ DEFESA: " + std::to_string(_defesaBase) + "\n";
+    status += "=======================================================";
+    return status;
+}

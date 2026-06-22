@@ -63,7 +63,6 @@ void InterfaceJogo::pausar(){
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
 
-    std::cout << "\nPressione [ENTER] para continuar...";
     
     std::cin.clear();
     // Aguarda o usuário apertar Enter de verdade
