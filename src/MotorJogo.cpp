@@ -4,8 +4,6 @@
 #include "InimigoIncomum.hpp"
 #include "InimigoBoss.hpp"
 #include "Combate.hpp"
-#include <stdexcept>
-#include <memory>
 
 // ============================================================================
 // CONSTRUTOR
@@ -56,9 +54,6 @@ void MotorJogo::rodar() {
 
         const Escolha& escolhaFeita = opcoes.at((_interface.solicitarEscolha(textosDasOpcoes)-1));
 
-        // Verifica se a escolha concede item
-        checarEventosEspeciais(escolhaFeita);
-
         // Verifica se a escolha gera combate
         if (escolhaFeita.geraCombate) {
             if (!realizarCombate(escolhaFeita.tipoInimigo)) {
@@ -66,6 +61,9 @@ void MotorJogo::rodar() {
                 continue; // volta ao início do loop na cena do checkpoint
             }
         }
+
+        // Verifica se a escolha concede item
+        checarEventosEspeciais(escolhaFeita);
 
         // Avança para a próxima cena
         _idCenaAtual = escolhaFeita.destinoID;
@@ -113,41 +111,60 @@ std::unique_ptr<Inimigo> MotorJogo::criarInimigo(const std::string& tipoInimigo)
 }
 
 void MotorJogo::inicializarHistoria() {
-    // ==========================================
-    // CENA 1: A Taverna (Nó Inicial)
-    // ==========================================
+
+    std::unordered_map<int, std::string> nomesItens = {
+    {101, "Cartão do Tyler Durden"},
+    {102, "Sabonete Caseiro"},
+    {103, "Kit de Primeiros Socorros"}
+    };
+
+    // =========================================================================
+    // CENA 1: A Exaustão Inicial
+    // =========================================================================
     Cena cena1(1,
-        "Você acorda em uma taverna escura. O estalajadeiro aponta para a porta "
-        "dos fundos e diz que há problemas nos arredores. O que você faz?", false);
+        "\n==================================================\n"
+        "                   INSÔNIA CRÔNICA            \n"
+        "==================================================\n"
+        "Faz semanas que você não dorme de verdade. Os dias se \n"
+        "misturam em reuniões, fotocópias e um vazio que nenhum \n"
+        "trabalho preenche. Você sente que precisa de alguma saída \n"
+        "antes que a exaustão te apague por completo.\n"
+        "--------------------------------------------------", true);
 
     Escolha escolha1A;
-    escolha1A.texto      = "Sair pela porta dos fundos em direção ao beco";
-    escolha1A.destinoID  = 2;
-    escolha1A.geraCombate = true;
-    escolha1A.tipoInimigo = "DesafianteDoBar";
+    escolha1A.texto       = "Procurar um grupo de apoio só para conseguir dormir";
+    escolha1A.destinoID   = 2;
+    escolha1A.geraCombate = false;
+    escolha1A.tipoInimigo = "";
     escolha1A.itemGanhoID = 0;
 
     Escolha escolha1B;
-    escolha1B.texto      = "Conversar com o estalajadeiro e pedir suprimentos";
-    escolha1B.destinoID  = 3;
-    escolha1B.geraCombate = false;
-    escolha1B.tipoInimigo = "";
-    escolha1B.itemGanhoID = 101;
+    escolha1B.texto       = "Afogar as mágoas em um bar barato no fim da rua";
+    escolha1B.destinoID   = 3;
+    escolha1B.geraCombate = true;
+    escolha1B.tipoInimigo = "TrabalhadorNoturno";
+    escolha1B.itemGanhoID = 0;
 
     cena1.adicionarEscolha(escolha1A);
     cena1.adicionarEscolha(escolha1B);
     _roteiro.insert(std::make_pair(1, cena1));
 
-    // ==========================================
-    // CENA 2: O Beco (Pós-combate)
-    // ==========================================
+    // =========================================================================
+    // CENA 2: O Grupo de Apoio (Checkpoint)
+    // =========================================================================
     Cena cena2(2,
-        "Após vencer o desafiante no beco lamacento, você avista os portões "
-        "da Vila Segura logo à frente.", false);
+        "\n==================================================\n"
+        "                   TURISTAS DE LUTO          \n"
+        "==================================================\n"
+        "No porão de uma igreja, em um círculo de estranhos, você \n"
+        "finalmente sente algo parecido com paz. Lá conhece Marla \n"
+        "Singer, outra turista de luto que finge sofrer doenças que \n"
+        "não tem. Por uma noite, ao menos, você consegue dormir.\n"
+        "--------------------------------------------------", true);
 
     Escolha escolha2A;
-    escolha2A.texto      = "Correr em direção aos portões da vila";
-    escolha2A.destinoID  = 3;
+    escolha2A.texto       = "Voltar para a rotina vazia, ainda sem rumo";
+    escolha2A.destinoID   = 3;
     escolha2A.geraCombate = false;
     escolha2A.tipoInimigo = "";
     escolha2A.itemGanhoID = 0;
@@ -155,48 +172,335 @@ void MotorJogo::inicializarHistoria() {
     cena2.adicionarEscolha(escolha2A);
     _roteiro.insert(std::make_pair(2, cena2));
 
-    // ==========================================
-    // CENA 3: Vila Segura (Checkpoint)
-    // ==========================================
+    // =========================================================================
+    // CENA 3: O Estranho do Avião
+    // =========================================================================
     Cena cena3(3,
-        "Você entra na Vila Segura. O ambiente é calmo e os guardas protegem "
-        "o local. Seu progresso foi salvo!", true);
+        "\n==================================================\n"
+        "                   ENCONTRO ACASAL            \n"
+        "==================================================\n"
+        "Em um voo de trabalho você conhece Tyler Durden: carismático, \n"
+        "imprevisível, dono de uma filosofia perigosa sobre liberdade e \n"
+        "destruição. Ao desembarcar, descobre que sua mala foi destruída \n"
+        "e sua casa, misteriosamente, explodiu. Tyler oferece um lugar \n"
+        "para ficar — com uma condição.\n"
+        "--------------------------------------------------", false);
 
     Escolha escolha3A;
-    escolha3A.texto      = "Seguir viagem em direção ao covil do chefe";
-    escolha3A.destinoID  = 4;
+    escolha3A.texto       = "Aceitar o convite de Tyler e ligar para ele";
+    escolha3A.destinoID   = 4;
     escolha3A.geraCombate = false;
     escolha3A.tipoInimigo = "";
-    escolha3A.itemGanhoID = 0;
+    escolha3A.itemGanhoID = 101; 
+
+    _player.buffArma(10);
 
     cena3.adicionarEscolha(escolha3A);
     _roteiro.insert(std::make_pair(3, cena3));
 
-    // ==========================================
-    // CENA 4: O Covil (Combate Final)
-    // ==========================================
+    // =========================================================================
+    // CENA 4: O Bar e o Convite (Checkpoint)
+    // =========================================================================
     Cena cena4(4,
-        "Você chega ao covil. Uma figura imponente bloqueia o caminho.", false);
+        "\n==================================================\n"
+        "                 ME BATA O MAIS FORTE         \n"
+        "==================================================\n"
+        "Vocês se encontram em um bar decadente. Depois de algumas \n"
+        "cervejas, Tyler faz um pedido estranho: que você o acerte com \n"
+        "toda a força que tiver. No estacionamento, sob a luz fraca de \n"
+        "um poste, a primeira luta do que viria a ser o Fight Club \n"
+        "começa sem regras e sem motivo — só pela sensação de estar vivo.\n"
+        "--------------------------------------------------", true);
 
     Escolha escolha4A;
-    escolha4A.texto      = "Enfrentar Tyler Durden";
-    escolha4A.destinoID  = 5;
+    escolha4A.texto       = "Acertar o primeiro golpe e aceitar a briga";
+    escolha4A.destinoID   = 5;
     escolha4A.geraCombate = true;
-    escolha4A.tipoInimigo = "TylerDurden";
+    escolha4A.tipoInimigo = "DesafianteDoBar";
     escolha4A.itemGanhoID = 0;
 
     cena4.adicionarEscolha(escolha4A);
     _roteiro.insert(std::make_pair(4, cena4));
 
-    // ==========================================
-    // CENA 5: Fim de Jogo
-    // ==========================================
+    // =========================================================================
+    // CENA 5: Nasce o Fight Club
+    // =========================================================================
     Cena cena5(5,
-        "Você chega ao topo da montanha e avista o horizonte. "
-        "A jornada termina aqui por enquanto!", false);
+        "\n==================================================\n"
+        "                   A PRIMEIRA REGRA          \n"
+        "==================================================\n"
+        "A notícia se espalha sem que ninguém precise falar nada. Toda \n"
+        "semana mais homens descem ao porão do bar para sangrar e se \n"
+        "sentir, por uma hora, donos da própria vida. As regras já \n"
+        "começam a se formar: a primeira regra é não falar sobre o clube.\n"
+        "--------------------------------------------------", false);
 
-    // Sem escolhas — encerra o loop em rodar()
+    Escolha escolha5A;
+    escolha5A.texto       = "Continuar fingindo normalidade no escritório durante o dia";
+    escolha5A.destinoID   = 6;
+    escolha5A.geraCombate = true;
+    escolha5A.tipoInimigo = "TrabalhadorNoturno";
+    escolha5A.itemGanhoID = 0;
+
+    Escolha escolha5B;
+    escolha5B.texto       = "Largar tudo e se mudar para a casa de Tyler";
+    escolha5B.destinoID   = 7;
+    escolha5B.geraCombate = false;
+    escolha5B.tipoInimigo = "";
+    escolha5B.itemGanhoID = 0;
+
+    cena5.adicionarEscolha(escolha5A);
+    cena5.adicionarEscolha(escolha5B);
     _roteiro.insert(std::make_pair(5, cena5));
+
+    // =========================================================================
+    // CENA 6: Sabotagem no Escritório
+    // =========================================================================
+    Cena cena6(6,
+        "\n==================================================\n"
+        "                SINAIS DE DESGASTE          \n"
+        "==================================================\n"
+        "Exausto e com hematomas que não consegue mais esconder, você \n"
+        "enfrenta um colega à beira de um colapso nervoso por excesso \n"
+        "de trabalho. Depois do confronto, fica claro que esse emprego \n"
+        "nunca mais vai caber na vida que está construindo.\n"
+        "--------------------------------------------------", false);
+
+    Escolha escolha6A;
+    escolha6A.texto       = "Seguir para a casa decadente na Paper Street";
+    escolha6A.destinoID   = 7;
+    escolha6A.geraCombate = false;
+    escolha6A.tipoInimigo = "";
+    escolha6A.itemGanhoID = 0;
+
+    cena6.adicionarEscolha(escolha6A);
+    _roteiro.insert(std::make_pair(6, cena6));
+
+    // =========================================================================
+    // CENA 7: A Casa na Paper Street (Checkpoint)
+    // =========================================================================
+    Cena cena7(7,
+        "\n==================================================\n"
+        "                   RUA PAPER, Nº 516          \n"
+        "==================================================\n"
+        "A casa é úmida, decrépita e quase caindo aos pedaços — mas é \n"
+        "livre. Sem televisão, sem chefe, sem móveis decentes. Aos \n"
+        "poucos outros homens insatisfeitos com suas próprias vidas \n"
+        "começam a aparecer, pedindo para fazer parte do que está \n"
+        "nascendo ali.\n"
+        "--------------------------------------------------", true);
+
+    Escolha escolha7A;
+    escolha7A.texto       = "Treinar no porão com os novos integrantes do clube";
+    escolha7A.destinoID   = 8;
+    escolha7A.geraCombate = true;
+    escolha7A.tipoInimigo = "SegurancaDeBalada";
+    escolha7A.itemGanhoID = 102;
+
+    Escolha escolha7B;
+    escolha7B.texto       = "Investigar os planos cada vez mais sombrios de Tyler";
+    escolha7B.destinoID   = 9;
+    escolha7B.geraCombate = false;
+    escolha7B.tipoInimigo = "";
+    escolha7B.itemGanhoID = 0;
+
+    cena7.adicionarEscolha(escolha7A);
+    cena7.adicionarEscolha(escolha7B);
+    _roteiro.insert(std::make_pair(7, cena7));
+
+    // =========================================================================
+    // CENA 8: O Porão Lota de Seguidores
+    // =========================================================================
+    Cena cena8(8,
+        "\n==================================================\n"
+        "                  EXÉRCITO NAS SOMBRAS       \n"
+        "==================================================\n"
+        "O Fight Club deixou de ser segredo de poucos. O porão lota \n"
+        "toda semana e os rostos vão se tornando irreconhecíveis sob o \n"
+        "sangue e o entusiasmo. Tyler observa tudo com um sorriso que \n"
+        "começa a incomodar.\n"
+        "--------------------------------------------------", false);
+
+    Escolha escolha8A;
+    escolha8A.texto       = "Seguir adiante com o que Tyler chama de Projeto Mayhem";
+    escolha8A.destinoID   = 9;
+    escolha8A.geraCombate = false;
+    escolha8A.tipoInimigo = "";
+    escolha8A.itemGanhoID = 0;
+
+    cena8.adicionarEscolha(escolha8A);
+    _roteiro.insert(std::make_pair(8, cena8));
+
+     // =========================================================================
+    // CENA 9: Nasce o Projeto Mayhem (Checkpoint)
+    // =========================================================================
+    Cena cena9(9,
+        "\n==================================================\n"
+        "                   PROJETO MAYHEM            \n"
+        "==================================================\n"
+        "Tyler reúne os membros mais fiéis e anuncia uma nova fase: \n"
+        "tarefas, missões de sabotagem, uma estrutura quase militar. \n"
+        "Ninguém faz perguntas — perguntar não é permitido. Você \n"
+        "recebe sua primeira missão.\n"
+        "--------------------------------------------------", true);
+
+    Escolha escolha9A;
+    escolha9A.texto       = "Aplicar a doutrina do clube em um recruta hesitante";
+    escolha9A.destinoID   = 10;
+    escolha9A.geraCombate = true;
+    escolha9A.tipoInimigo = "RecrutaDoutrinado";
+    escolha9A.itemGanhoID = 103;
+
+    Escolha escolha9B;
+    escolha9B.texto       = "Invadir um prédio corporativo vigiado";
+    escolha9B.destinoID   = 11;
+    escolha9B.geraCombate = true;
+    escolha9B.tipoInimigo = "GuardaPatrimonial";
+    escolha9B.itemGanhoID = 104;
+
+    Escolha escolha9C;
+    escolha9C.texto       = "Eliminar um sabotador rival que ameaça o Projeto";
+    escolha9C.destinoID   = 12;
+    escolha9C.geraCombate = true;
+    escolha9C.tipoInimigo = "SabotadorRival";
+    escolha9C.itemGanhoID = 105;
+
+    cena9.adicionarEscolha(escolha9A);
+    cena9.adicionarEscolha(escolha9B);
+    cena9.adicionarEscolha(escolha9C);
+    _roteiro.insert(std::make_pair(9, cena9));
+
+    // =========================================================================
+    // CENA 10: Missão — Doutrinação
+    // =========================================================================
+    Cena cena10(10,
+        "\n==================================================\n"
+        "                       DOUTRINAÇÃO           \n"
+        "==================================================\n"
+        "O recruta cai, mas se levanta orgulhoso, repetindo as regras \n"
+        "do clube como um mantra. Você percebe o quanto essas pessoas \n"
+        "estão dispostas a obedecer sem questionar — e isso te \n"
+        "incomoda mais do que devia.\n"
+        "--------------------------------------------------", false);
+
+    Escolha escolha10A;
+    escolha10A.texto       = "Voltar à casa e procurar Tyler";
+    escolha10A.destinoID   = 13;
+    escolha10A.geraCombate = false;
+    escolha10A.tipoInimigo = "";
+    escolha10A.itemGanhoID = 0;
+
+    cena10.adicionarEscolha(escolha10A);
+    _roteiro.insert(std::make_pair(10, cena10));
+
+    // =========================================================================
+    // CENA 11: Missão — Alvo Corporativo
+    // =========================================================================
+    Cena cena11(11,
+        "\n==================================================\n"
+        "                       INFILTRAÇÃO          \n"
+        "==================================================\n"
+        "O guarda patrimonial luta com a determinação de quem só está \n"
+        "fazendo o trabalho dele. Depois de vencê-lo, você encontra \n"
+        "documentos que revelam o verdadeiro alcance dos planos do \n"
+        "Projeto Mayhem — muito maior do que você imaginava.\n"
+        "--------------------------------------------------", false);
+
+    Escolha escolha11A;
+    escolha11A.texto       = "Voltar à casa e procurar Tyler";
+    escolha11A.destinoID   = 13;
+    escolha11A.geraCombate = false;
+    escolha11A.tipoInimigo = "";
+    escolha11A.itemGanhoID = 0;
+
+    cena11.adicionarEscolha(escolha11A);
+    _roteiro.insert(std::make_pair(11, cena11));
+
+     // =========================================================================
+    // CENA 12: Missão — Sabotagem Interna
+    // =========================================================================
+    Cena cena12(12,
+        "\n==================================================\n"
+        "                       GUERRILHA            \n"
+        "==================================================\n"
+        "O sabotador rival luta como quem não tem nada a perder, \n"
+        "explosivos e fogo cobrindo cada movimento. Quando finalmente \n"
+        "cai, você sente que algo mudou dentro de você — uma linha foi \n"
+        "cruzada e não há mais volta fácil.\n"
+        "--------------------------------------------------", false);
+
+    Escolha escolha12A;
+    escolha12A.texto       = "Voltar à casa e procurar Tyler";
+    escolha12A.destinoID   = 13;
+    escolha12A.geraCombate = false;
+    escolha12A.tipoInimigo = "";
+    escolha12A.itemGanhoID = 0;
+
+    cena12.adicionarEscolha(escolha12A);
+    _roteiro.insert(std::make_pair(12, cena12));
+
+    // =========================================================================
+    // CENA 13: As Peças se Encaixam (Checkpoint)
+    // =========================================================================
+    Cena cena13(13,
+        "\n==================================================\n"
+        "                       O DESPERTAR              \n"
+        "==================================================\n"
+        "Pedaço por pedaço, as coincidências deixam de fazer sentido \n"
+        "como coincidências. As pessoas te chamam pelo nome de Tyler. \n"
+        "Você nunca os viu juntos no mesmo lugar. A verdade começa a \n"
+        "se formar, terrível e inevitável: Tyler Durden nunca existiu \n"
+        "fora da sua própria cabeça.\n"
+        "--------------------------------------------------", false);
+
+    Escolha escolha13A;
+    escolha13A.texto       = "Confrontar a verdade sobre Tyler Durden de uma vez";
+    escolha13A.destinoID   = 14;
+    escolha13A.geraCombate = false;
+    escolha13A.tipoInimigo = "";
+    escolha13A.itemGanhoID = 0;
+
+    cena13.adicionarEscolha(escolha13A);
+    _roteiro.insert(std::make_pair(13, cena13));
+
+    // =========================================================================
+    // CENA 14: O Confronto Final
+    // =========================================================================
+    Cena cena14(14,
+        "\n==================================================\n"
+        "                      EU CONTRA EU           \n"
+        "==================================================\n"
+        "Você encontra Tyler em meio aos escombros de tudo o que \n"
+        "ajudou a construir. Ele sorri, sabendo exatamente o que você \n"
+        "está pensando — porque ele é você. Não há mais como fugir \n"
+        "dessa luta: é preciso enfrentá-lo, de uma vez por todas, para \n"
+        "recuperar o controle sobre a própria vida.\n"
+        "--------------------------------------------------", false);
+
+    Escolha escolha14A;
+    escolha14A.texto       = "Enfrentar Tyler Durden de uma vez por todas";
+    escolha14A.destinoID   = 15;
+    escolha14A.geraCombate = true;
+    escolha14A.tipoInimigo = "TylerDurden";
+    escolha14A.itemGanhoID = 0;
+
+    cena14.adicionarEscolha(escolha14A);
+    _roteiro.insert(std::make_pair(14, cena14));
+
+        // =========================================================================
+    // CENA 15: Liberdade (Final)
+    // =========================================================================
+    Cena cena15(15,
+        "\n==================================================\n"
+        "                  FIM DA JORNADA                  \n"
+        "==================================================\n"
+        "De mãos dadas com Marla, você observa os prédios ao redor \n"
+        "começarem a cair, um a um, no horizonte. Pela primeira vez em \n"
+        "muito tempo, a mente está silenciosa. O que vem a seguir é \n"
+        "incerto — mas, enfim, é só seu.\n"
+        "==================================================\n", false);
+
+    _roteiro.insert(std::make_pair(15, cena15));
 }
 
 void MotorJogo::processarDerrota() {
@@ -211,11 +515,56 @@ void MotorJogo::processarDerrota() {
 }
 
 void MotorJogo::checarEventosEspeciais(const Escolha& escolha) {
-    // Por ora só trata item — expandir quando Aventureiro expor mais métodos
-    if (escolha.itemGanhoID > 0) {
-        _interface.exibirTexto(
-            "Você obteve um item! (ID: "
-            + std::to_string(escolha.itemGanhoID) + ")");
-        _player.buffArma(5); // bônus simbólico até sistema de itens ser implementado
+
+     // =========================================================================
+    // BANCO DE DADOS DE ITENS (Tabelas de Mapeamento)
+    // =========================================================================
+
+    // 1. Catálogo de Nomes: Associa o ID do item ao nome que aparecerá na tela
+    const std::unordered_map<int, std::string> nomesItens = {
+        {101, "Cartão do Tyler Durden"},
+        {102, "Colete de Segurança"},
+        {103, "Soco Ingles"},
+        {104, "Porrete"},
+        {105, "Faca"}
+    };
+
+    using AcaoBuff = std::function<void(Aventureiro&, int)>;
+
+    // Agora o mapa guarda: { Função, Valor do Buff, Nome do Atributo }
+    const std::unordered_map<int, std::tuple<AcaoBuff, int, std::string>> tabelaDeBuffs = {
+        {101, {&Aventureiro::buffArma, 5, "Força"}},       
+        {102, {&Aventureiro::buffArmadura, 3, "Defesa"}},   
+        {103, {&Aventureiro::buffArma, 8, "Força"}},   
+        {104, {&Aventureiro::buffArma, 9, "Força"}},       
+        {105, {&Aventureiro::buffArma, 15, "Força"}}        
+    };
+
+int idItem = escolha.itemGanhoID;
+    
+    if (idItem <= 0) return;
+
+    // 1. Busca o nome do item
+    std::string nomeItem = "Item Desconhecido";
+    auto itNome = nomesItens.find(idItem);
+    if (itNome != nomesItens.end()) {
+        nomeItem = itNome->second;
+    }
+
+    // 2. Busca e aplica o buff dinamicamente
+    auto itBuff = tabelaDeBuffs.find(idItem);
+    if (itBuff != tabelaDeBuffs.end()) {
+        // Extrai os elementos da tupla
+        auto acao = std::get<0>(itBuff->second);
+        int valor = std::get<1>(itBuff->second);
+        std::string tipoBuff = std::get<2>(itBuff->second); // "Força" ou "Defesa"
+        
+        // Exibe a mensagem customizada mostrando onde o bônus foi aplicado
+        _interface.exibirTexto("\n[ITEM OBTIDO]: " + nomeItem + " (+" + std::to_string(valor) + " de " + tipoBuff + ")!");
+        
+        // Executa a função de buff no jogador
+        acao(_player, valor);
+    } else {
+        _interface.exibirTexto("\n[ITEM OBTIDO]: " + nomeItem + "!");
     }
 }

@@ -57,11 +57,15 @@ void InterfaceJogo::exibirStatus (const Personagem& p){
 }
 
 void InterfaceJogo::pausar(){
+    // Verifica se ainda há caracteres no buffer (como o '\n' de leituras anteriores)
+    // Se houver, limpa o buffer antes de exibir a mensagem de pausa
+    if (std::cin.rdbuf()->in_avail() > 0) {
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+
     std::cout << "\nPressione [ENTER] para continuar...";
     
-    // Limpa qualquer caractere residual que tenha ficado no buffer do cin
     std::cin.clear();
-    
-    // Aguarda o usuário apertar Enter
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    // Aguarda o usuário apertar Enter de verdade
+    std::cin.get(); 
 }
