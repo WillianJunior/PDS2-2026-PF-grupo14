@@ -120,11 +120,11 @@ void TrabalhadorNoturno::executarTurno(Personagem& alvo) {
 SegurancaDeBalada::SegurancaDeBalada(std::string nome, int nivel)
     : Inimigo(
         nome.empty() ? "Segurança de Balada" : nome,
-        /*hp*/     60 * nivel,   // mais HP que os outros comuns
-        /*defesa*/  8 * nivel,   // resistente fisicamente
-        /*forca*/   8 * nivel,
+        /*hp*/     140,   // mais HP que os outros comuns
+        /*defesa*/  25,   // resistente fisicamente
+        /*forca*/   15,
         nivel,
-        /*xp*/     25 * nivel)
+        /*xp*/     200)
 {
     validarNivel(nivel, "SegurancaDeBalada");
 
@@ -147,12 +147,10 @@ void SegurancaDeBalada::executarTurno(Personagem& alvo) {
     // A cada 3 turnos assume postura defensiva (ativa o escudo interno)
     if (_contadorTurnos % 3 == 0) {
         _escudoAtivo = true;
-        InterfaceJogo::exibirTexto(
-            _nome + " cruza os braços e assume postura de bloqueio — "
-            "resistência redobrada até o próximo turno!");
+        InterfaceJogo::exibirTexto("\n🛡️  [POSTURA] " + _nome + " cruza os braços e finca a base!");
+        InterfaceJogo::exibirTexto("    > Escudo Ativo: Impacto de ataques comuns mitigado pela metade até a próxima rodada.");
     }
 
-    InterfaceJogo::exibirTexto(
-        _nome + " empurra com força bruta!");
+    InterfaceJogo::exibirTexto("\n💥 [ATAQUE] " + _nome + " projeta o corpo à frente com um Empurrão de Segurança!");
     alvo.receberDano(_forcaBase, TipoHabilidade::FISICO);
 }
