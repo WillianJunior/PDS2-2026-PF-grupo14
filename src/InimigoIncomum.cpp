@@ -29,11 +29,11 @@ namespace {
 RecrutaDoutrinado::RecrutaDoutrinado(std::string nome, int nivel)
     : Inimigo(
         nome.empty() ? "Recruta Doutrinado" : nome,
-        /*hp*/     55 * nivel,
-        /*defesa*/ 14 * nivel,   // alta defesa física — força uso de ESPECIAL
-        /*forca*/  10 * nivel,
+        /*hp*/     300,
+        /*defesa*/ 30,   // alta defesa física — força uso de ESPECIAL
+        /*forca*/  35,
         nivel,
-        /*xp*/     40 * nivel)
+        /*xp*/     400)
 {
     validarNivel(nivel, "RecrutaDoutrinado");
 
@@ -113,11 +113,11 @@ void RecrutaDoutrinado::executarTurno(Personagem& alvo) {
 GuardaPatrimonial::GuardaPatrimonial(std::string nome, int nivel)
     : Inimigo(
         nome.empty() ? "Guarda Patrimonial" : nome,
-        /*hp*/     65 * nivel,
-        /*defesa*/ 16 * nivel,   // alta defesa física e mágica (equipamento completo)
-        /*forca*/  11 * nivel,
+        /*hp*/     300,
+        /*defesa*/ 40,   // alta defesa física e mágica (equipamento completo)
+        /*forca*/  25,
         nivel,
-        /*xp*/     45 * nivel)
+        /*xp*/     400)
 {
     validarNivel(nivel, "GuardaPatrimonial");
 
