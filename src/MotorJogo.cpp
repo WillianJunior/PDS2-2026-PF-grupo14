@@ -221,16 +221,61 @@ void MotorJogo::inicializarHistoria() {
 
     cena4.adicionarEscolha(escolha4A);
     _roteiro.insert(std::make_pair(4, cena4));
-    
-    // ==========================================
-    // CENA 5: Fim de Jogo
-    // ==========================================
-    Cena cena5(5,
-        "Você chega ao topo da montanha e avista o horizonte. "
-        "A jornada termina aqui por enquanto!", false);
 
-    // Sem escolhas — encerra o loop em rodar()
+    // =========================================================================
+    // CENA 5: Nasce o Fight Club
+    // =========================================================================
+    Cena cena5(5,
+        "\n==================================================\n"
+        "                   A PRIMEIRA REGRA          \n"
+        "==================================================\n"
+        "A notícia se espalha sem que ninguém precise falar nada. Toda \n"
+        "semana mais homens descem ao porão do bar para sangrar e se \n"
+        "sentir, por uma hora, donos da própria vida. As regras já \n"
+        "começam a se formar: a primeira regra é não falar sobre o clube.\n"
+        "--------------------------------------------------", false);
+
+    Escolha escolha5A;
+    escolha5A.texto       = "Continuar fingindo normalidade no escritório durante o dia";
+    escolha5A.destinoID   = 6;
+    escolha5A.geraCombate = true;
+    escolha5A.tipoInimigo = "TrabalhadorNoturno";
+    escolha5A.itemGanhoID = 0;
+
+    Escolha escolha5B;
+    escolha5B.texto       = "Largar tudo e se mudar para a casa de Tyler";
+    escolha5B.destinoID   = 7;
+    escolha5B.geraCombate = false;
+    escolha5B.tipoInimigo = "";
+    escolha5B.itemGanhoID = 0;
+
+    cena5.adicionarEscolha(escolha5A);
+    cena5.adicionarEscolha(escolha5B);
     _roteiro.insert(std::make_pair(5, cena5));
+
+    // =========================================================================
+    // CENA 6: Sabotagem no Escritório
+    // =========================================================================
+    Cena cena6(6,
+        "\n==================================================\n"
+        "                SINAIS DE DESGASTE          \n"
+        "==================================================\n"
+        "Exausto e com hematomas que não consegue mais esconder, você \n"
+        "enfrenta um colega à beira de um colapso nervoso por excesso \n"
+        "de trabalho. Depois do confronto, fica claro que esse emprego \n"
+        "nunca mais vai caber na vida que está construindo.\n"
+        "--------------------------------------------------", false);
+
+    Escolha escolha6A;
+    escolha6A.texto       = "Seguir para a casa decadente na Paper Street";
+    escolha6A.destinoID   = 7;
+    escolha6A.geraCombate = false;
+    escolha6A.tipoInimigo = "";
+    escolha6A.itemGanhoID = 0;
+
+    cena6.adicionarEscolha(escolha6A);
+    _roteiro.insert(std::make_pair(6, cena6));
+
 }
 
 void MotorJogo::processarDerrota() {
