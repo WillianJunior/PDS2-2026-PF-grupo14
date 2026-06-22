@@ -276,6 +276,61 @@ void MotorJogo::inicializarHistoria() {
     cena6.adicionarEscolha(escolha6A);
     _roteiro.insert(std::make_pair(6, cena6));
 
+    // =========================================================================
+    // CENA 7: A Casa na Paper Street (Checkpoint)
+    // =========================================================================
+    Cena cena7(7,
+        "\n==================================================\n"
+        "                   RUA PAPER, Nº 516          \n"
+        "==================================================\n"
+        "A casa é úmida, decrépita e quase caindo aos pedaços — mas é \n"
+        "livre. Sem televisão, sem chefe, sem móveis decentes. Aos \n"
+        "poucos outros homens insatisfeitos com suas próprias vidas \n"
+        "começam a aparecer, pedindo para fazer parte do que está \n"
+        "nascendo ali.\n"
+        "--------------------------------------------------", true);
+
+    Escolha escolha7A;
+    escolha7A.texto       = "Treinar no porão com os novos integrantes do clube";
+    escolha7A.destinoID   = 8;
+    escolha7A.geraCombate = true;
+    escolha7A.tipoInimigo = "SegurancaDeBalada";
+    escolha7A.itemGanhoID = 102;
+
+    Escolha escolha7B;
+    escolha7B.texto       = "Investigar os planos cada vez mais sombrios de Tyler";
+    escolha7B.destinoID   = 9;
+    escolha7B.geraCombate = false;
+    escolha7B.tipoInimigo = "";
+    escolha7B.itemGanhoID = 0;
+
+    cena7.adicionarEscolha(escolha7A);
+    cena7.adicionarEscolha(escolha7B);
+    _roteiro.insert(std::make_pair(7, cena7));
+
+    // =========================================================================
+    // CENA 8: O Porão Lota de Seguidores
+    // =========================================================================
+    Cena cena8(8,
+        "\n==================================================\n"
+        "                  EXÉRCITO NAS SOMBRAS       \n"
+        "==================================================\n"
+        "O Fight Club deixou de ser segredo de poucos. O porão lota \n"
+        "toda semana e os rostos vão se tornando irreconhecíveis sob o \n"
+        "sangue e o entusiasmo. Tyler observa tudo com um sorriso que \n"
+        "começa a incomodar.\n"
+        "--------------------------------------------------", false);
+
+    Escolha escolha8A;
+    escolha8A.texto       = "Seguir adiante com o que Tyler chama de Projeto Mayhem";
+    escolha8A.destinoID   = 9;
+    escolha8A.geraCombate = false;
+    escolha8A.tipoInimigo = "";
+    escolha8A.itemGanhoID = 0;
+
+    cena8.adicionarEscolha(escolha8A);
+    _roteiro.insert(std::make_pair(8, cena8));
+
 }
 
 void MotorJogo::processarDerrota() {
