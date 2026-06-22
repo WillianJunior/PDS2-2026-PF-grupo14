@@ -29,11 +29,11 @@ namespace {
 TylerDurden::TylerDurden(std::string nome, int nivel)
     : Inimigo(
         nome.empty() ? "Tyler Durden" : nome,
-        /*hp*/     150 * nivel,
-        /*defesa*/  12 * nivel,
-        /*forca*/   20 * nivel,
+        /*hp*/     400,
+        /*defesa*/  30,
+        /*forca*/   40,
         nivel,
-        /*xp*/     200 * nivel),
+        /*xp*/     500 * nivel),
       _curaEstoicaUsada(false),
       _fase2Anunciada(false),
       _ultraUsado(false)
@@ -50,43 +50,43 @@ TylerDurden::TylerDurden(std::string nome, int nivel)
     adicionarHabilidade(Habilidade(
         "Sangramento (Tyler)",
         TipoHabilidade::DOT,
-        0, 0, 8 * nivel, "", 3));
+        0, 0, 5 * nivel, "", 3));
 
     // ── SUPORTE: buff de força em si mesmo por 2 turnos (Fase 1) ─────────────
     adicionarHabilidade(Habilidade(
         "Foco Destrutivo",
         TipoHabilidade::SUPORTE,
-        0, 0, 8 * nivel, "forca", 2));
+        0, 0, 4 * nivel, "forca", 2));
 
     // ── Fase 2: dano mágico que ignora defesa física ──────────────────────────
     adicionarHabilidade(Habilidade(
         "Impacto Psicológico",
         TipoHabilidade::ESPECIAL,
-        0, 0, 18 * nivel, ""));
+        0, 0, _forcaBase+(2* nivel) , ""));
 
     // ── DEBUFF: reduz defesa do jogador por 2 turnos (Fase 2) ────────────────
     adicionarHabilidade(Habilidade(
         "Humilhação",
         TipoHabilidade::DEBUFF,
-        0, 0, 10 * nivel, "defesa", 2));
+        0, 0, 3 * nivel, "defesa", 2));
 
     // ── HOT: cura contínua em si mesmo por 2 turnos (Fase 2) ─────────────────
     adicionarHabilidade(Habilidade(
         "Resiliência Estóica",
         TipoHabilidade::HOT,
-        0, 0, 12 * nivel, "", 2));
+        0, 0, 6 * nivel, "", 2));
 
     // ── ULTRA: golpe final perfura escudo — dispara 1 vez quando alvo < 30% HP
     adicionarHabilidade(Habilidade(
         "Desconstrução Total",
         TipoHabilidade::ULTRA,
-        0, 0, _forcaBase * 3, ""));
+        0, 0, _forcaBase * 2, ""));
 
     // ── Cura Estóica: recuperação pontual única quando Tyler < 20% HP ─────────
     adicionarHabilidade(Habilidade(
         "Cura Estóica",
         TipoHabilidade::CURA,
-        0, 0, 40 * nivel, ""));
+        0, 0, 30 * nivel, ""));
 }
 
 // ============================================================================
