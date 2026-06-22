@@ -148,24 +148,30 @@ void MotorJogo::inicializarHistoria() {
     cena1.adicionarEscolha(escolha1A);
     cena1.adicionarEscolha(escolha1B);
     _roteiro.insert(std::make_pair(1, cena1));
-    
-    // ==========================================
-    // CENA 2: O Beco (Pós-combate)
-    // ==========================================
+
+    // =========================================================================
+    // CENA 2: O Grupo de Apoio (Checkpoint)
+    // =========================================================================
     Cena cena2(2,
-        "Após vencer o desafiante no beco lamacento, você avista os portões "
-        "da Vila Segura logo à frente.", false);
+        "\n==================================================\n"
+        "                   TURISTAS DE LUTO          \n"
+        "==================================================\n"
+        "No porão de uma igreja, em um círculo de estranhos, você \n"
+        "finalmente sente algo parecido com paz. Lá conhece Marla \n"
+        "Singer, outra turista de luto que finge sofrer doenças que \n"
+        "não tem. Por uma noite, ao menos, você consegue dormir.\n"
+        "--------------------------------------------------", true);
 
     Escolha escolha2A;
-    escolha2A.texto      = "Correr em direção aos portões da vila";
-    escolha2A.destinoID  = 3;
+    escolha2A.texto       = "Voltar para a rotina vazia, ainda sem rumo";
+    escolha2A.destinoID   = 3;
     escolha2A.geraCombate = false;
     escolha2A.tipoInimigo = "";
     escolha2A.itemGanhoID = 0;
 
     cena2.adicionarEscolha(escolha2A);
     _roteiro.insert(std::make_pair(2, cena2));
-
+    
     // ==========================================
     // CENA 3: Vila Segura (Checkpoint)
     // ==========================================
