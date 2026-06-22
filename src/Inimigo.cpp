@@ -11,10 +11,8 @@ Inimigo::Inimigo(std::string nome, int hp, int defesa, int forca, int nivel, int
 // MÉTODOS MEMBROS E GETTERS (Estilo Esqueleto/TDD Red Compacto)
 // ============================================================================
 
-void Inimigo::executarTurno(Personagem& alvo) { (void)alvo; }
 
 int Inimigo::getXPRecompensa() const { 
     return _xpRecompensa; 
 }
 
-std::string Inimigo::getDeclaracaoStatus() const {}
