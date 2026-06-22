@@ -62,7 +62,6 @@ void DesafianteDoBar::executarTurno(Personagem& alvo) {
     InterfaceJogo::exibirTexto("\n👊 [ATAQUE FÍSICO] " + _nome + " avança cambaleando com um Soco Bêbado!");
     alvo.receberDano(_forcaBase, TipoHabilidade::FISICO);
 }
-
 // ============================================================================
 // TRABALHADOR NOTURNO ESTRESSADO
 // ============================================================================
@@ -153,4 +152,47 @@ void SegurancaDeBalada::executarTurno(Personagem& alvo) {
 
     InterfaceJogo::exibirTexto("\n💥 [ATAQUE] " + _nome + " projeta o corpo à frente com um Empurrão de Segurança!");
     alvo.receberDano(_forcaBase, TipoHabilidade::FISICO);
+}
+
+
+// ============================================================================
+// MÉTODOS GETDECLARACAOSTATUS (MÉTODOS VIRTUAIS)
+// ============================================================================
+
+std::string DesafianteDoBar::getDeclaracaoStatus() const {
+    std::string status = "🍺 [INIMIGO COMUM: Desafiante] 🍺\n";
+    status += "=======================================================\n";
+    status += " 👤 NOME : " + this->getNome() + " [Nível " + std::to_string(this->getNivel()) + "]\n";
+    status += "=======================================================\n";
+    status += " ❤️ HP    : " + std::to_string(_hp) + " / " + std::to_string(_hpMax) + "\n";
+    status += " ⚔️ FORÇA : " + std::to_string(_forcaBase) + " (Soco Bêbado)\n";
+    status += " 🛡️ DEFESA: " + std::to_string(_defesaBase) + "\n";
+    status += "=======================================================";
+    return status;
+}
+
+std::string TrabalhadorNoturno::getDeclaracaoStatus() const {
+    std::string status = "🕒 😤 [INIMIGO COMUM: Trabalhador Noturno] 🕒\n";
+    status += "=======================================================\n";
+    status += " 👤 NOME : " + this->getNome() + " [Nível " + std::to_string(this->getNivel()) + "]\n";
+    status += " 🚨 STATUS: Estressado (40% de chance de Crítico x2)\n";
+    status += "=======================================================\n";
+    status += " ❤️ HP    : " + std::to_string(_hp) + " / " + std::to_string(_hpMax) + "\n";
+    status += " ⚔️ FORÇA : " + std::to_string(_forcaBase) + "\n";
+    status += " 🛡️ DEFESA: " + std::to_string(_defesaBase) + "\n";
+    status += "=======================================================";
+    return status;
+}
+
+std::string SegurancaDeBalada::getDeclaracaoStatus() const {
+    std::string status = "🕴️ 🛑 [INIMIGO COMUM: Segurança] 🕴️\n";
+    status += "=======================================================\n";
+    status += " 👤 NOME : " + this->getNome() + " [Nível " + std::to_string(this->getNivel()) + "]\n";
+    status += " 🛡️ ESCUDO: " + std::string(_escudoAtivo ? "ATIVADO (50% Mitigação)" : "Inativo") + "\n";
+    status += "=======================================================\n";
+    status += " ❤️ HP    : " + std::to_string(_hp) + " / " + std::to_string(_hpMax) + "\n";
+    status += " ⚔️ FORÇA : " + std::to_string(_forcaBase) + "\n";
+    status += " 🛡️ DEFESA: " + std::to_string(_defesaBase) + "\n";
+    status += "=======================================================";
+    return status;
 }
