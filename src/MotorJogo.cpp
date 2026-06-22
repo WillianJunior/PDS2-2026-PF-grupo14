@@ -197,23 +197,31 @@ void MotorJogo::inicializarHistoria() {
 
     cena3.adicionarEscolha(escolha3A);
     _roteiro.insert(std::make_pair(3, cena3));
-    
-    // ==========================================
-    // CENA 4: O Covil (Combate Final)
-    // ==========================================
+
+    // =========================================================================
+    // CENA 4: O Bar e o Convite (Checkpoint)
+    // =========================================================================
     Cena cena4(4,
-        "Você chega ao covil. Uma figura imponente bloqueia o caminho.", false);
+        "\n==================================================\n"
+        "                 ME BATA O MAIS FORTE         \n"
+        "==================================================\n"
+        "Vocês se encontram em um bar decadente. Depois de algumas \n"
+        "cervejas, Tyler faz um pedido estranho: que você o acerte com \n"
+        "toda a força que tiver. No estacionamento, sob a luz fraca de \n"
+        "um poste, a primeira luta do que viria a ser o Fight Club \n"
+        "começa sem regras e sem motivo — só pela sensação de estar vivo.\n"
+        "--------------------------------------------------", true);
 
     Escolha escolha4A;
-    escolha4A.texto      = "Enfrentar Tyler Durden";
-    escolha4A.destinoID  = 5;
+    escolha4A.texto       = "Acertar o primeiro golpe e aceitar a briga";
+    escolha4A.destinoID   = 5;
     escolha4A.geraCombate = true;
-    escolha4A.tipoInimigo = "TylerDurden";
+    escolha4A.tipoInimigo = "DesafianteDoBar";
     escolha4A.itemGanhoID = 0;
 
     cena4.adicionarEscolha(escolha4A);
     _roteiro.insert(std::make_pair(4, cena4));
-
+    
     // ==========================================
     // CENA 5: Fim de Jogo
     // ==========================================
