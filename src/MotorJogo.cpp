@@ -439,6 +439,55 @@ void MotorJogo::inicializarHistoria() {
     cena12.adicionarEscolha(escolha12A);
     _roteiro.insert(std::make_pair(12, cena12));
 
+    // =========================================================================
+    // CENA 13: As Peças se Encaixam (Checkpoint)
+    // =========================================================================
+    Cena cena13(13,
+        "\n==================================================\n"
+        "                       O DESPERTAR              \n"
+        "==================================================\n"
+        "Pedaço por pedaço, as coincidências deixam de fazer sentido \n"
+        "como coincidências. As pessoas te chamam pelo nome de Tyler. \n"
+        "Você nunca os viu juntos no mesmo lugar. A verdade começa a \n"
+        "se formar, terrível e inevitável: Tyler Durden nunca existiu \n"
+        "fora da sua própria cabeça.\n"
+        "--------------------------------------------------", false);
+
+    Escolha escolha13A;
+    escolha13A.texto       = "Confrontar a verdade sobre Tyler Durden de uma vez";
+    escolha13A.destinoID   = 14;
+    escolha13A.geraCombate = false;
+    escolha13A.tipoInimigo = "";
+    escolha13A.itemGanhoID = 0;
+
+    cena13.adicionarEscolha(escolha13A);
+    _roteiro.insert(std::make_pair(13, cena13));
+
+    // =========================================================================
+    // CENA 14: O Confronto Final
+    // =========================================================================
+    Cena cena14(14,
+        "\n==================================================\n"
+        "                      EU CONTRA EU           \n"
+        "==================================================\n"
+        "Você encontra Tyler em meio aos escombros de tudo o que \n"
+        "ajudou a construir. Ele sorri, sabendo exatamente o que você \n"
+        "está pensando — porque ele é você. Não há mais como fugir \n"
+        "dessa luta: é preciso enfrentá-lo, de uma vez por todas, para \n"
+        "recuperar o controle sobre a própria vida.\n"
+        "--------------------------------------------------", false);
+
+    Escolha escolha14A;
+    escolha14A.texto       = "Enfrentar Tyler Durden de uma vez por todas";
+    escolha14A.destinoID   = 15;
+    escolha14A.geraCombate = true;
+    escolha14A.tipoInimigo = "TylerDurden";
+    escolha14A.itemGanhoID = 0;
+
+    cena14.adicionarEscolha(escolha14A);
+    _roteiro.insert(std::make_pair(14, cena14));
+
+
 }
 
 void MotorJogo::processarDerrota() {
