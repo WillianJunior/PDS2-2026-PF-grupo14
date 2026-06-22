@@ -211,11 +211,56 @@ void MotorJogo::processarDerrota() {
 }
 
 void MotorJogo::checarEventosEspeciais(const Escolha& escolha) {
-    // Por ora só trata item — expandir quando Aventureiro expor mais métodos
-    if (escolha.itemGanhoID > 0) {
-        _interface.exibirTexto(
-            "Você obteve um item! (ID: "
-            + std::to_string(escolha.itemGanhoID) + ")");
-        _player.buffArma(5); // bônus simbólico até sistema de itens ser implementado
+
+     // =========================================================================
+    // BANCO DE DADOS DE ITENS (Tabelas de Mapeamento)
+    // =========================================================================
+
+    // 1. Catálogo de Nomes: Associa o ID do item ao nome que aparecerá na tela
+    const std::unordered_map<int, std::string> nomesItens = {
+        {101, "Cartão do Tyler Durden"},
+        {102, "Colete de Segurança"},
+        {103, "Soco Ingles"},
+        {104, "Porrete"},
+        {105, "Faca"}
+    };
+
+    using AcaoBuff = std::function<void(Aventureiro&, int)>;
+
+    // Agora o mapa guarda: { Função, Valor do Buff, Nome do Atributo }
+    const std::unordered_map<int, std::tuple<AcaoBuff, int, std::string>> tabelaDeBuffs = {
+        {101, {&Aventureiro::buffArma, 5, "Força"}},       
+        {102, {&Aventureiro::buffArmadura, 3, "Defesa"}},   
+        {103, {&Aventureiro::buffArma, 8, "Força"}},   
+        {104, {&Aventureiro::buffArma, 9, "Força"}},       
+        {105, {&Aventureiro::buffArma, 15, "Força"}}        
+    };
+
+int idItem = escolha.itemGanhoID;
+    
+    if (idItem <= 0) return;
+
+    // 1. Busca o nome do item
+    std::string nomeItem = "Item Desconhecido";
+    auto itNome = nomesItens.find(idItem);
+    if (itNome != nomesItens.end()) {
+        nomeItem = itNome->second;
+    }
+
+    // 2. Busca e aplica o buff dinamicamente
+    auto itBuff = tabelaDeBuffs.find(idItem);
+    if (itBuff != tabelaDeBuffs.end()) {
+        // Extrai os elementos da tupla
+        auto acao = std::get<0>(itBuff->second);
+        int valor = std::get<1>(itBuff->second);
+        std::string tipoBuff = std::get<2>(itBuff->second); // "Força" ou "Defesa"
+        
+        // Exibe a mensagem customizada mostrando onde o bônus foi aplicado
+        _interface.exibirTexto("\n[ITEM OBTIDO]: " + nomeItem + " (+" + std::to_string(valor) + " de " + tipoBuff + ")!");
+        
+        // Executa a função de buff no jogador
+        acao(_player, valor);
+    } else {
+        _interface.exibirTexto("\n[ITEM OBTIDO]: " + nomeItem + "!");
     }
 }
