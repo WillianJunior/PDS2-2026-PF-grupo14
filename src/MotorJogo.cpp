@@ -171,24 +171,33 @@ void MotorJogo::inicializarHistoria() {
 
     cena2.adicionarEscolha(escolha2A);
     _roteiro.insert(std::make_pair(2, cena2));
-    
-    // ==========================================
-    // CENA 3: Vila Segura (Checkpoint)
-    // ==========================================
+
+    // =========================================================================
+    // CENA 3: O Estranho do Avião
+    // =========================================================================
     Cena cena3(3,
-        "Você entra na Vila Segura. O ambiente é calmo e os guardas protegem "
-        "o local. Seu progresso foi salvo!", true);
+        "\n==================================================\n"
+        "                   ENCONTRO ACASAL            \n"
+        "==================================================\n"
+        "Em um voo de trabalho você conhece Tyler Durden: carismático, \n"
+        "imprevisível, dono de uma filosofia perigosa sobre liberdade e \n"
+        "destruição. Ao desembarcar, descobre que sua mala foi destruída \n"
+        "e sua casa, misteriosamente, explodiu. Tyler oferece um lugar \n"
+        "para ficar — com uma condição.\n"
+        "--------------------------------------------------", false);
 
     Escolha escolha3A;
-    escolha3A.texto      = "Seguir viagem em direção ao covil do chefe";
-    escolha3A.destinoID  = 4;
+    escolha3A.texto       = "Aceitar o convite de Tyler e ligar para ele";
+    escolha3A.destinoID   = 4;
     escolha3A.geraCombate = false;
     escolha3A.tipoInimigo = "";
-    escolha3A.itemGanhoID = 0;
+    escolha3A.itemGanhoID = 101; 
+
+    _player.buffArma(10);
 
     cena3.adicionarEscolha(escolha3A);
     _roteiro.insert(std::make_pair(3, cena3));
-
+    
     // ==========================================
     // CENA 4: O Covil (Combate Final)
     // ==========================================
