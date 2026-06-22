@@ -107,20 +107,20 @@ void TylerDurden::executarTurno(Personagem& alvo) {
     if (alvo.getHPMax() <= 0) {
         throw std::logic_error("TylerDurden::executarTurno — HPMax do alvo invalido: " + std::to_string(alvo.getHPMax()));
     }
-    
+
     _contadorTurnos++;
 
     // ── GATILHO GLOBAL: Cura Estóica (Tyler < 20% HP, apenas 1 vez) ──────────
-    // Verificado antes de qualquer outra ação — Tyler nunca morre sem reagir
     const float hpTylerRatio = static_cast<float>(_hp) / static_cast<float>(_hpMax);
 
     if (hpTylerRatio < 0.20f && !_curaEstoicaUsada) {
         _curaEstoicaUsada = true;
         const int valorCura = 40 * _nivel;
-        InterfaceJogo::exibirTexto(
-            "\n[TYLER] \"A dor é purificadora.\"\n"
-            "Tyler fecha os olhos por um instante e recupera o controle — "
-            "Cura Estóica! (+" + std::to_string(valorCura) + " HP)");
+        
+        InterfaceJogo::exibirTexto("\n┌───────────────────────────────────────────────────────┐");
+        InterfaceJogo::exibirTexto("  💬 [TYLER]: \"A dor é purificadora.\"");
+        InterfaceJogo::exibirTexto("  💚 Tyler recupera o controle — Cura Estóica! (+" + std::to_string(valorCura) + " HP)");
+        InterfaceJogo::exibirTexto("└───────────────────────────────────────────────────────┘");
         receberCura(valorCura);
     }
 
@@ -132,9 +132,12 @@ void TylerDurden::executarTurno(Personagem& alvo) {
 
     if (hpAlvo < 0.30f && !_ultraUsado) {
         _ultraUsado = true;
-        InterfaceJogo::exibirTexto(
-            "\n[TYLER] \"Você estava morto muito antes de entrar nessa sala.\"\n"
-            + _nome + " desfere a DESCONSTRUÇÃO TOTAL — nenhum escudo vai parar isso!");
+        
+        InterfaceJogo::exibirTexto("\n💥⚡💥⚡💥⚡💥⚡💥⚡💥⚡💥⚡💥⚡💥⚡💥⚡💥⚡💥⚡💥⚡💥⚡💥⚡💥");
+        InterfaceJogo::exibirTexto("  💬 [TYLER]: \"Você estava morto muito antes de entrar nisso.\"");
+        InterfaceJogo::exibirTexto("  🚨 " + _nome + " ativa a DESCONSTRUÇÃO TOTAL!");
+        InterfaceJogo::exibirTexto("💥⚡💥⚡💥⚡💥⚡💥⚡💥⚡💥⚡💥⚡💥⚡💥⚡💥⚡💥⚡💥⚡💥⚡💥⚡💥");
+        
         alvo.receberDano(_forcaBase * 3, TipoHabilidade::ULTRA);
         return;
     }
@@ -146,38 +149,33 @@ void TylerDurden::executarTurno(Personagem& alvo) {
 
         if (!_fase2Anunciada) {
             _fase2Anunciada = true;
-            InterfaceJogo::exibirTexto(
-                "\n[TYLER] \"Você me fez assim. Agora enfrente as consequências.\"\n"
-                "Tyler muda de postura — os ataques agora penetram sua mente!");
+            InterfaceJogo::exibirTexto("\n🔥 🛑 🛑 🛑 🛑 🛑 🛑 🛑 FASE 2 🛑 🛑 🛑 🛑 🛑 🛑 🛑 🔥");
+            InterfaceJogo::exibirTexto("  💬 [TYLER]: \"Você me fez assim. Aguente as consequências.\"");
+            InterfaceJogo::exibirTexto("  🧠 Postura Alterada — Os ataques agora penetram sua mente!");
+            InterfaceJogo::exibirTexto("🔥 🛑 🛑 🛑 🛑 🛑 🛑 🛑 🛑 🛑 🛑 🛑 🛑 🛑 🛑 🛑 🛑 🔥\n");
         }
 
-        // A cada 4 turnos: Resiliência Estóica — HOT em si mesmo por 2 turnos
+        // A cada 4 turnos: Resiliência Estóica — HOT
         if (_contadorTurnos % 4 == 0) {
-            InterfaceJogo::exibirTexto(
-                _nome + " respira fundo e ativa sua resiliência interna — "
-                "Resiliência Estóica! Recuperando HP por 2 turnos.");
+            InterfaceJogo::exibirTexto("✨ [SUPORTE] " + _nome + " canaliza foco interno: +Resiliência Estóica (HoT).");
             aplicarHoT("Resiliência Estóica", 12 * _nivel, 2);
         }
 
-        // A cada 3 turnos: Humilhação — debuff de defesa no alvo por 2 turnos
+        // A cada 3 turnos: Humilhação — debuff
         if (_contadorTurnos % 3 == 0) {
-            InterfaceJogo::exibirTexto(
-                _nome + " destrói sua autoestima com uma risada — "
-                "Humilhação! Sua defesa cai por 2 turnos!");
+            InterfaceJogo::exibirTexto("💀 [DEBUFF] " + _nome + " quebra sua postura com escárnio: -Humilhação (Defesa reduzida).");
             alvo.aplicarDebuff("Humilhação", "defesa", 10 * _nivel, 2);
         }
 
-        // Ataque principal da fase 2: Impacto Psicológico (ESPECIAL — ignora defesa física)
-        InterfaceJogo::exibirTexto(
-            _nome + " invade sua psique com um Impacto Psicológico!");
-        alvo.receberDano(_forcaBase + (5 * _nivel), TipoHabilidade::ESPECIAL);
-
         // Sangramento periódico na fase 2
         if (_contadorTurnos % 3 == 0) {
-            InterfaceJogo::exibirTexto(
-                _nome + " abre outro corte fundo — Sangramento aplicado!");
+            InterfaceJogo::exibirTexto("🩸 [EFEITO] " + _nome + " desfere um corte profundo: +Sangramento (DoT).");
             alvo.aplicarDoT("Sangramento (Tyler)", 8 * _nivel, 3);
         }
+
+        // Ataque principal da fase 2: Impacto Psicológico (ESPECIAL)
+        InterfaceJogo::exibirTexto("\n🔮 [ATAQUE ESPECIAL] " + _nome + " usa Impacto Psicológico!");
+        alvo.receberDano(_forcaBase + (5 * _nivel), TipoHabilidade::ESPECIAL);
 
         return;
     }
@@ -186,24 +184,22 @@ void TylerDurden::executarTurno(Personagem& alvo) {
     // FASE 1: HP de Tyler > 50%
     // ════════════════════════════════════════════════════════════════════════
 
-    // A cada 4 turnos: Foco Destrutivo — buff de força em si mesmo por 2 turnos
+    // A cada 4 turnos: Foco Destrutivo — buff
     if (_contadorTurnos % 4 == 0) {
-        InterfaceJogo::exibirTexto(
-            "\n[TYLER] \"Sem medo. Sem hesitação.\"\n"
-            + _nome + " canaliza raiva pura — Foco Destrutivo! "
-            "Sua força aumenta por 2 turnos!");
+        InterfaceJogo::exibirTexto("\n┌───────────────────────────────────────────────────────┐");
+        InterfaceJogo::exibirTexto("  💬 [TYLER]: \"Sem medo. Sem hesitação.\"");
+        InterfaceJogo::exibirTexto("  💪 [BUFF] Tyler acumula fúria bruta: +Foco Destrutivo (Força aumentada).");
+        InterfaceJogo::exibirTexto("└───────────────────────────────────────────────────────┘");
         aplicarBuff("Foco Destrutivo", "forca", 8 * _nivel, 2);
     }
 
-    // A cada 3 turnos: Sangramento — DoT por 3 turnos
+    // A cada 3 turnos: Sangramento — DoT
     if (_contadorTurnos % 3 == 0) {
-        InterfaceJogo::exibirTexto(
-            _nome + " te abre com precisão cirúrgica — Sangramento aplicado!");
+        InterfaceJogo::exibirTexto("🩸 [EFEITO] " + _nome + " causa uma lacração violenta: +Sangramento (DoT).");
         alvo.aplicarDoT("Sangramento (Tyler)", 8 * _nivel, 3);
     }
 
     // Ataque principal da fase 1: Soco do Caos (FISICO)
-    InterfaceJogo::exibirTexto(
-        _nome + " desfere um soco devastador!");
+    InterfaceJogo::exibirTexto("\n👊 [ATAQUE FÍSICO] " + _nome + " avança com Soco do Caos!");
     alvo.receberDano(_forcaBase, TipoHabilidade::FISICO);
 }
