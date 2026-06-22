@@ -30,11 +30,11 @@ namespace {
 DesafianteDoBar::DesafianteDoBar(std::string nome, int nivel)
     : Inimigo(
         nome.empty() ? "Desafiante do Bar" : nome,
-        /*hp*/     35 * nivel,
-        /*defesa*/  3 * nivel,
-        /*forca*/   7 * nivel,
+        /*hp*/     150,
+        /*defesa*/  15,
+        /*forca*/   15,
         nivel,
-        /*xp*/     15 * nivel)
+        /*xp*/      60)
 {
     validarNivel(nivel, "DesafianteDoBar");
 
@@ -47,6 +47,10 @@ DesafianteDoBar::DesafianteDoBar(std::string nome, int nivel)
         /*atributo*/ ""));
 }
 
+// ============================================================================
+// EXECUÇÃO DE TURNO — DESAFIANTE DO BAR
+// ============================================================================
+
 void DesafianteDoBar::executarTurno(Personagem& alvo) {
     if (!alvo.estaVivo()) return;
 
@@ -55,9 +59,7 @@ void DesafianteDoBar::executarTurno(Personagem& alvo) {
 
     _contadorTurnos++;
 
-    InterfaceJogo::exibirTexto(
-        _nome + " parte para cima com um soco mal executado!");
-
+    InterfaceJogo::exibirTexto("\n👊 [ATAQUE FÍSICO] " + _nome + " avança cambaleando com um Soco Bêbado!");
     alvo.receberDano(_forcaBase, TipoHabilidade::FISICO);
 }
 
@@ -68,11 +70,11 @@ void DesafianteDoBar::executarTurno(Personagem& alvo) {
 TrabalhadorNoturno::TrabalhadorNoturno(std::string nome, int nivel)
     : Inimigo(
         nome.empty() ? "Trabalhador Noturno Estressado" : nome,
-        /*hp*/     20 * nivel,   // frágil
-        /*defesa*/  2 * nivel,
-        /*forca*/  10 * nivel,   // alto, mas compensa com pouco HP
+        /*hp*/     150,   // frágil
+        /*defesa*/  15,
+        /*forca*/  20,   // alto, mas compensa com pouco HP
         nivel,
-        /*xp*/     18 * nivel)
+        /*xp*/     90)
 {
     validarNivel(nivel, "TrabalhadorNoturno");
 
@@ -103,12 +105,10 @@ void TrabalhadorNoturno::executarTurno(Personagem& alvo) {
     const bool critico = (rand() % 100) < 40;
 
     if (critico) {
-        InterfaceJogo::exibirTexto(
-            _nome + " entra em colapso de adrenalina — GOLPE CRÍTICO!");
+        InterfaceJogo::exibirTexto("\n🚨 💥 [GOLPE CRÍTICO] " + _nome + " entra em colapso de raiva e ativa Surto de Raiva!");
         alvo.receberDano(_forcaBase * 2, TipoHabilidade::FISICO);
     } else {
-        InterfaceJogo::exibirTexto(
-            _nome + " desfere um soco desesperado!");
+        InterfaceJogo::exibirTexto("\n👊 [ATAQUE FÍSICO] " + _nome + " desfere um soco desesperado de exaustão!");
         alvo.receberDano(_forcaBase, TipoHabilidade::FISICO);
     }
 }
