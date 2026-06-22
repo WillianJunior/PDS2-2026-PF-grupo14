@@ -415,6 +415,30 @@ void MotorJogo::inicializarHistoria() {
 
     cena11.adicionarEscolha(escolha11A);
     _roteiro.insert(std::make_pair(11, cena11));
+
+     // =========================================================================
+    // CENA 12: Missão — Sabotagem Interna
+    // =========================================================================
+    Cena cena12(12,
+        "\n==================================================\n"
+        "                       GUERRILHA            \n"
+        "==================================================\n"
+        "O sabotador rival luta como quem não tem nada a perder, \n"
+        "explosivos e fogo cobrindo cada movimento. Quando finalmente \n"
+        "cai, você sente que algo mudou dentro de você — uma linha foi \n"
+        "cruzada e não há mais volta fácil.\n"
+        "--------------------------------------------------", false);
+
+    Escolha escolha12A;
+    escolha12A.texto       = "Voltar à casa e procurar Tyler";
+    escolha12A.destinoID   = 13;
+    escolha12A.geraCombate = false;
+    escolha12A.tipoInimigo = "";
+    escolha12A.itemGanhoID = 0;
+
+    cena12.adicionarEscolha(escolha12A);
+    _roteiro.insert(std::make_pair(12, cena12));
+
 }
 
 void MotorJogo::processarDerrota() {
