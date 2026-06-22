@@ -4,8 +4,6 @@
 #include "InimigoIncomum.hpp"
 #include "InimigoBoss.hpp"
 #include "Combate.hpp"
-#include <stdexcept>
-#include <memory>
 
 // ============================================================================
 // CONSTRUTOR
@@ -56,9 +54,6 @@ void MotorJogo::rodar() {
 
         const Escolha& escolhaFeita = opcoes.at((_interface.solicitarEscolha(textosDasOpcoes)-1));
 
-        // Verifica se a escolha concede item
-        checarEventosEspeciais(escolhaFeita);
-
         // Verifica se a escolha gera combate
         if (escolhaFeita.geraCombate) {
             if (!realizarCombate(escolhaFeita.tipoInimigo)) {
@@ -66,6 +61,9 @@ void MotorJogo::rodar() {
                 continue; // volta ao início do loop na cena do checkpoint
             }
         }
+
+        // Verifica se a escolha concede item
+        checarEventosEspeciais(escolhaFeita);
 
         // Avança para a próxima cena
         _idCenaAtual = escolhaFeita.destinoID;
