@@ -93,8 +93,8 @@ TylerDurden::TylerDurden(std::string nome, int nivel)
 // EXECUÇÃO DE TURNO — SISTEMA DE FASES + ARSENAL COMPLETO
 // ============================================================================
 
-
 void TylerDurden::executarTurno(Personagem& alvo) {
+
     if (!alvo.estaVivo()) return;
 
     processarEfeitosContinuos();
@@ -202,4 +202,26 @@ void TylerDurden::executarTurno(Personagem& alvo) {
     // Ataque principal da fase 1: Soco do Caos (FISICO)
     InterfaceJogo::exibirTexto("\n👊 [ATAQUE FÍSICO] " + _nome + " avança com Soco do Caos!");
     alvo.receberDano(_forcaBase, TipoHabilidade::FISICO);
+}
+
+// ============================================================================
+// DECLARAÇÃO DE STATUS EXCLUSIVA DO BOSS
+// ============================================================================
+
+std::string TylerDurden::getDeclaracaoStatus() const {
+    // Usando as funções get públicas para garantir compatibilidade com o modificador const
+    const float hpRatio = static_cast<float>(this->getHP()) / static_cast<float>(this->getHPMax());
+    std::string faseAtual = (hpRatio <= 0.50f) ? "FASE 2: MENTAL" : "FASE 1: BRUTA";
+
+    std::string status = "👑 🔥 [CHEFE DO JOGO] 🔥 👑\n";
+    status += "=======================================================\n";
+    status += " 💀 NOME : " + this->getNome() + " [Nível " + std::to_string(this->getNivel()) + "]\n";
+    status += " 📈 ESTADO: " + faseAtual + "\n";
+    status += "=======================================================\n";
+    status += " ❤️ HP    : " + std::to_string(this->getHP()) + " / " + std::to_string(this->getHPMax()) + "\n";
+    status += " ⚔️ FORÇA : " + std::to_string(this->getForcaTotal()) + "\n";
+    status += " 🛡️ DEFESA: " + std::to_string(this->getDefesa()) + "\n";
+    status += "=======================================================";
+    
+    return status;
 }
