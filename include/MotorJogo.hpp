@@ -7,6 +7,11 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <stdexcept>
+#include <unordered_map>
+#include <vector>
+#include <functional>
+#include <tuple>
 
 // Forward declarations para evitar acoplamento desnecessário e inclusões circulares
 class Inimigo;
