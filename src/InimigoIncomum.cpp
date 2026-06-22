@@ -198,11 +198,11 @@ void GuardaPatrimonial::executarTurno(Personagem& alvo) {
 SabotadorRival::SabotadorRival(std::string nome, int nivel)
     : Inimigo(
         nome.empty() ? "Sabotador Rival" : nome,
-        /*hp*/     25 * nivel,   // frágil — eliminar rapidamente
-        /*defesa*/  3 * nivel,
-        /*forca*/  15 * nivel,   // dano altíssimo
+        /*hp*/     300,   // frágil — eliminar rapidamente
+        /*defesa*/  20,
+        /*forca*/  45,   // dano altíssimo
         nivel,
-        /*xp*/     60 * nivel)
+        /*xp*/     400)
 {
     validarNivel(nivel, "SabotadorRival");
 
