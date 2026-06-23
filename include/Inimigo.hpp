@@ -17,13 +17,13 @@ public:
     /** * @brief Executa o turno do inimigo. 
      * Pode ser sobrescrita pelas subclasses se cada tipo agir de forma única.
      */
-    void executarTurno(Personagem& alvo) override;
+    //virtual void executarTurno(Personagem& alvo) = 0 const;
 
     /** @brief Retorna a recompensa de XP ao morrer. */
     int getXPRecompensa() const;
 
     // Retorna apenas Nome, Nível e HP
-    std::string getDeclaracaoStatus() const override;
+    //virtual std::string getDeclaracaoStatus() = 0;
 
 protected:
    /**
@@ -41,5 +41,6 @@ protected:
     int _contadorTurnos;    ///< Contador de rodadas utilizado para gerenciar o padrão do monstro.   
     int _xpRecompensa;     ///< Experiência concedida ao jogador.
 };
+
 
 #endif
