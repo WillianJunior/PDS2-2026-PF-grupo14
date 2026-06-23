@@ -32,6 +32,7 @@ public:
      * @pre alvo referencia um Personagem válido.
      */
     void executarTurno(Personagem& alvo) override;
+    std::string getDeclaracaoStatus() const override;
 };
 
 /**
@@ -59,6 +60,7 @@ public:
      * @pre alvo referencia um Personagem válido.
      */
     void executarTurno(Personagem& alvo) override;
+    std::string getDeclaracaoStatus() const override;
 };
 
 /**
@@ -88,6 +90,7 @@ public:
      * @pre alvo referencia um Personagem válido.
      */
     void executarTurno(Personagem& alvo) override;
+    std::string getDeclaracaoStatus() const override;
 };
 
 #endif // INIMIGO_COMUM_HPP
