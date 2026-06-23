@@ -51,6 +51,11 @@ public:
      */
     void executarTurno(Personagem& alvo) override;
 
+    /**
+     * @brief Retorna a string formatada com o status detalhado do Boss.
+     */
+    std::string getDeclaracaoStatus() const override;
+
 private:
     bool _curaEstoicaUsada;   ///< Garante que a Cura Estóica ocorra no máximo uma vez.
     bool _fase2Anunciada;     ///< Controla o anúncio narrativo da transição para a Fase 2.
