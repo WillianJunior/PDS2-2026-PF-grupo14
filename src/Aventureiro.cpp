@@ -200,7 +200,7 @@ void Aventureiro::dormir() {
 void Aventureiro::subirNivel() {
     this->_nivel++;
     this->_hpMax += 40; 
-    this->_forcaBase += 16; 
+    this->_forcaBase += 12; 
     this->_defesaBase += 7; 
 
     this->_hp = this->_hpMax; 
@@ -209,11 +209,11 @@ void Aventureiro::subirNivel() {
 
     switch (this->_nivel) {
         case 2: {
-            Habilidade socoForte("Soco Forte", TipoHabilidade::FISICO, 35, 0, 23*_nivel, "", 0);
+            Habilidade socoForte("Soco Forte", TipoHabilidade::FISICO, 35, 0, 30*_nivel, "", 0);
             this->adicionarHabilidade(socoForte);
             InterfaceJogo::exibirTexto("[NOVA HABILIDADE] Você aprendeu: Soco Forte!");
 
-            Habilidade usarDipirona("Usar Dipirona", TipoHabilidade::HOT, 0, 10, 15*(1 + (0.7*_nivel)), "", 3);
+            Habilidade usarDipirona("Usar Dipirona", TipoHabilidade::HOT, 0, 10, 15*(1 + (0.8*_nivel)), "", 3);
             this->adicionarHabilidade(usarDipirona);
             InterfaceJogo::exibirTexto("[NOVA HABILIDADE] Você aprendeu: Usar Dipirona!");
             break;
@@ -235,7 +235,7 @@ void Aventureiro::subirNivel() {
             this->adicionarHabilidade(aplicarAdrenalina);
             InterfaceJogo::exibirTexto("[NOVA HABILIDADE] Você aprendeu: Aplicar Adrenalina!");
 
-            Habilidade focar("Focar", TipoHabilidade::SUPORTE, 25, 10, 12*_nivel, "força", 3);
+            Habilidade focar("Focar", TipoHabilidade::SUPORTE, 25, 10, 10*_nivel, "força", 3);
             this->adicionarHabilidade(focar);
             InterfaceJogo::exibirTexto("[NOVA HABILIDADE] Você aprendeu: Focar!");
             break;

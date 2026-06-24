@@ -186,8 +186,10 @@ void Personagem::processarEfeitosContinuos() {
     while (it != this->_efeitosAtivos.end()) {
         
         // EXIBE NA TELA O FEEDBACK VISUAL DO RPG:
-        InterfaceJogo::exibirTexto("\n[EFEITO ATIVO] " + it->nomeEfeito + " está agindo em " + this->getNome() + "!");
-        
+        InterfaceJogo::exibirTexto("\n┌───────────────────────────────────────────────────────┐");
+        InterfaceJogo::exibirTexto("  ⏳ [EFEITO ATIVO]: " + it->nomeEfeito);
+        InterfaceJogo::exibirTexto("  👤 Alvo          : " + this->getNome());
+        InterfaceJogo::exibirTexto("└───────────────────────────────────────────────────────┘");        
         // O GATILHO CRÍTICO REFORMULADO:
         switch (it->tipo) {
             case TipoHabilidade::DOT:
@@ -198,7 +200,7 @@ void Personagem::processarEfeitosContinuos() {
             case TipoHabilidade::HOT:
                 // HoT apenas incrementa o HP diretamente respeitando o HP Máximo
                 this->receberCura(it->valorPorTurno);
-                InterfaceJogo::exibirTexto(this->getNome() + " recuperou " + std::to_string(it->valorPorTurno) + " de HP por efeito contínuo!");
+                InterfaceJogo::exibirTexto("\n" + this->getNome() + " recuperou " + std::to_string(it->valorPorTurno) + " de HP por efeito contínuo!\n");
                 break;
                 
             default:
@@ -210,7 +212,7 @@ void Personagem::processarEfeitosContinuos() {
 
         // SE O EFEITO CHEGOU AO FIM (ZEROU OS TURNOS):
         if (it->turnosRestantes <= 0) {
-            InterfaceJogo::exibirTexto("O efeito de " + it->nomeEfeito + " em " + this->getNome() + " expirou.");
+            InterfaceJogo::exibirTexto("\nO efeito de " + it->nomeEfeito + " em " + this->getNome() + " expirou.\n");
             
             // REMOVE O EFEITO DO VETOR COM SEGURANÇA:
             it = this->_efeitosAtivos.erase(it); 
@@ -231,7 +233,7 @@ void Personagem::processarEfeitosContinuos() {
             modificadoresRestantes.push_back(mod);
         } else {
             // Se chegou a 0, o efeito expirou neste exato momento
-            std::cout << "> O efeito '" << mod.nomeEfeito << "' aplicado em " << this->getNome() << " expirou.\n";
+            std::cout << "\n> O efeito '" << mod.nomeEfeito << "' aplicado em " << this->getNome() << " expirou.\n";
         }
     }
 
