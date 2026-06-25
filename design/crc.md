@@ -43,11 +43,11 @@ Os cartões CRC mapeiam as responsabilidades e colaborações das principais cla
 
 ## 3. Classe: `Inimigo` (Abstrata)
 
-**Descrição:** Superclasse abstrata que define o comportamento base das inteligências artificiais dos monstros.
+**Descrição:** Superclasse abstrata que define o comportamento base dos monstros.
 
 **Responsabilidades**
 - Armazenar o XP concedido ao jogador após derrota
-- Controlar contador interno de turnos da IA, usado pelas subclasses para alternar habilidades
+- Controlar contador interno de turnos, usado pelas subclasses para alternar habilidades
 
 **Colaboradores**
 - `Personagem`
@@ -59,7 +59,7 @@ Os cartões CRC mapeiam as responsabilidades e colaborações das principais cla
 **Descrição:** Inimigos comuns utilizados em batalhas iniciais, sem rotação de efeitos contínuos.
 
 **Responsabilidades**
-- Implementar IAs simples:
+- Implementar comportamentos simples:
   - `DesafianteDoBar`: ataque físico único e direto
   - `TrabalhadorNoturno`: 40% de chance de crítico (dano dobrado)
   - `SegurancaDeBalada`: assume postura defensiva (escudo) a cada 3 turnos
@@ -95,7 +95,7 @@ Os cartões CRC mapeiam as responsabilidades e colaborações das principais cla
 **Descrição:** Chefe final da campanha, com máquina de estados de fase.
 
 **Responsabilidades**
-- Implementar IA avançada baseada em fases de HP (Fase 1 acima de 50%, Fase 2 entre 20% e 50%)
+- Implementar comportamento avançado baseado em fases de HP (Fase 1 acima de 50%, Fase 2 entre 20% e 50%)
 - Entrar em estado de cura única (Cura Estóica) quando o próprio HP cai abaixo de 20%
 - Executar um ataque ULTRA único (Desconstrução Total) quando o HP do alvo cai abaixo de 30%
 - Alternar ataques físico/especial e efeitos de buff/debuff/DoT/HoT conforme a fase atual
