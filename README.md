@@ -153,6 +153,8 @@ g++ -std=c++17 -I. --coverage -fprofile-arcs -ftest-coverage \
 ./run_tests
 gcovr --root . --html-details -o coverage.html
 ```
+**Observação:**
+Ao rodar o Maketest, favor apertar as teclas "1" e "ENTER" até que a simulação de entrada acabe, para que assim possa mostrar a cobertura.
 
 ## 📚 Documentação Técnica
 
