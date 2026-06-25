@@ -31,6 +31,7 @@ Personagem::Personagem(std::string nome, int hp, int defesa, int forca, int nive
     _forcaBase = forca;
     _nivel = nivel;
     _vivo = true;
+    _escudoAtivo = false;
 }
 
 // ============================================================================

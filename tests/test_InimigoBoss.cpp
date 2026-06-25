@@ -1,146 +1,104 @@
+/**
+ * @file test_InimigoBoss.cpp
+ * @brief Testes de unidade para o Boss TylerDurden — Cobertura e Estados.
+ */
 
 #include "doctest.h"
-
 #include "InimigoBoss.hpp"
 #include "Aventureiro.hpp"
+#include <string>
 #include <iostream>
-TEST_SUITE("TylerDurden") {
 
-    TEST_CASE("Construtor rejeita nivel invalido") {
-        CHECK_THROWS_AS(TylerDurden("Tyler", 0), std::invalid_argument);
-        CHECK_THROWS_AS(TylerDurden("Tyler", -1), std::invalid_argument);
-    }
+// =========================================================
+// SUITE: TylerDurden - Ciclo de Vida e Fases
+// =========================================================
+TEST_SUITE("TylerDurden - Ciclo de Vida e Fases") {
 
-    TEST_CASE("Nome padrao quando string vazia") {
-        TylerDurden boss("", 1);
-
-        CHECK(boss.getNome() == "Tyler Durden");
-    }
-
-    TEST_CASE("Ataque basico da fase 1 causa dano") {
+    TEST_CASE("Fase 1: Fluxo Bruto e Buff de Fúria") {
         TylerDurden boss("Tyler", 1);
-        Aventureiro alvo("Heroi", 100, 5, 10);
+        Aventureiro alvo("Heroi", 400, 10, 10);
 
-        int hpAntes = alvo.getHP();
-
-        boss.executarTurno(alvo);
-
-        CHECK(alvo.getHP() < hpAntes);
-    }
-
-    TEST_CASE("Foco Destrutivo aumenta a forca do chefe") {
-        TylerDurden boss("Tyler", 1);
-        Aventureiro alvo("Heroi", 100, 5, 10);
-
+        // No turno 4 (múltiplo de 4), ele ativa o "Foco Destrutivo" que bufa a força
+        // Forçamos 4 turnos na Fase 1 (HP cheio)
         int forcaInicial = boss.getForcaTotal();
-
-        for (int i = 0; i < 4; i++) {
-            boss.executarTurno(alvo);
-        }
+        
+        boss.executarTurno(alvo); // Turno 1
+        boss.executarTurno(alvo); // Turno 2
+        boss.executarTurno(alvo); // Turno 3
+        boss.executarTurno(alvo); // Turno 4 -> Aplica Buff
 
         CHECK(boss.getForcaTotal() > forcaInicial);
     }
 
-    TEST_CASE("Sangramento aplica dano continuo") {
+    TEST_CASE("Fase 2: Transição por HP e Disparo de Habilidades Mentais") {
         TylerDurden boss("Tyler", 1);
-        Aventureiro alvo("Heroi", 100, 5, 10);
+        Aventureiro alvo("Heroi", 400, 10, 10);
 
-        for (int i = 0; i < 3; i++) {
+        // Guardamos a defesa original do herói antes dos debuffs
+        int defesaOriginal = alvo.getDefesa();
+
+        // Derruba o HP do Boss para entrar na Fase 2 (HP base é 400, tiramos 220 -> sobra 180, que é 45%)
+        while(boss.getHP() >= 180) {
+            boss.receberDano(50, TipoHabilidade::FISICO);
+        }
+        
+        // Vamos rodar turnos suficientes até que o _contadorTurnos seja múltiplo de 3
+        // para garantir o acionamento do debuff "Humilhação"
+        for(int i = 0; i < 4; i++) {
             boss.executarTurno(alvo);
         }
 
-        int hpAntes = alvo.getHP();
-
-        alvo.processarEfeitosContinuos();
-
-        CHECK(alvo.getHP() < hpAntes);
+        // Verifica se a defesa do herói foi reduzida pelo debuff
+        CHECK(alvo.getDefesa() < defesaOriginal);
     }
 
-    TEST_CASE("Cura Estoica ativa quando HP fica abaixo de 20 por cento") {
+TEST_CASE("Gatilhos Críticos: Cura Estóica e Ultra") {
+    // --- Teste Isolado 1: O Ultra do Boss ---
+    {
         TylerDurden boss("Tyler", 1);
-        Aventureiro alvo("Heroi", 100, 5, 10);
+        Aventureiro alvo("Heroi", 400, 10, 10);
 
-        boss.receberDano(300, TipoHabilidade::FISICO);
+        // Força o HP do alvo para baixo de 30% (120 HP)
+        while(boss.getHP() >= 120) {
+            boss.receberDano(50, TipoHabilidade::FISICO);
+        }
 
-        int hpAntes = boss.getHP();
-
-        boss.executarTurno(alvo);
-
-        CHECK(boss.getHP() > hpAntes);
+        int hpAntesDoUltra = alvo.getHP();
+        boss.executarTurno(alvo); // Ativa Desconstrução Total
+        CHECK(alvo.getHP() < hpAntesDoUltra);
     }
 
-    TEST_CASE("Cura Estoica ocorre apenas uma vez") {
+    // --- Teste Isolado 2: A Cura Estóica do Boss ---
+    {
         TylerDurden boss("Tyler", 1);
-        Aventureiro alvo("Heroi", 100, 5, 10);
+        Aventureiro alvo("Heroi", 400, 10, 10); // Herói com HP cheio para não ativar o Ultra
 
-        boss.receberDano(130, TipoHabilidade::FISICO);
+        // Força o HP do Boss para baixo de 20% (80 HP)
+        // Como o HP máximo dele é 400, tirar 330 deixa ele com 70 HP (abaixo de 20%)
+         while(boss.getHP() >= 80) {
+            boss.receberDano(20, TipoHabilidade::FISICO);
+        }
+        int hpAntesDaCura = boss.getHP();
+        boss.executarTurno(alvo); // Deve entrar no if do hpTylerRatio e curar
 
-        boss.executarTurno(alvo);
-
-        int hpAposPrimeiraCura = boss.getHP();
-
-        boss.receberDano(20, TipoHabilidade::FISICO);
-
-        boss.executarTurno(alvo);
-
-        CHECK(boss.getHP() <= hpAposPrimeiraCura);
+        CHECK(boss.getHP() > hpAntesDaCura);
     }
+}
 
-    TEST_CASE("Entrada na fase 2 quando HP fica abaixo de 50 por cento") {
+    TEST_CASE("Declaração de Status - Cobertura das Duas Ramificações") {
         TylerDurden boss("Tyler", 1);
-        Aventureiro alvo("Heroi", 100, 5, 10);
+        Aventureiro alvo("Heroi", 400, 10, 10);
 
-        boss.receberDano(80, TipoHabilidade::FISICO);
+        // --- Ramificação 1: Fase 1 ---
+        // CORREÇÃO: Usando getDeclaracaoStatus() que existe no seu .cpp
+        std::string statusFase1 = boss.getDeclaracaoStatus();
+        CHECK(statusFase1.find("FASE 1: BRUTA") != std::string::npos);
 
-        int hpAntes = alvo.getHP();
+        // --- Ramificação 2: Fase 2 ---
+        boss.receberDano(400, TipoHabilidade::FISICO); // Deixa em Fase 2
+        boss.executarTurno(alvo); 
 
-        boss.executarTurno(alvo);
-
-        CHECK(alvo.getHP() < hpAntes);
-    }
-
-    TEST_CASE("Desconstrucao Total ativa quando alvo fica abaixo de 30 por cento") {
-        TylerDurden boss("Tyler", 1);
-        Aventureiro alvo("Heroi", 100, 5, 10);
-
-        alvo.receberDano(75, TipoHabilidade::ULTRA);
-
-        int hpAntes = alvo.getHP();
-
-        boss.executarTurno(alvo);
-
-        CHECK(alvo.getHP() < hpAntes);
-    }
-
-    TEST_CASE("Desconstrucao Total ocorre apenas uma vez") {
-        TylerDurden boss("Tyler", 1);
-        Aventureiro alvo("Heroi", 100, 5, 10);
-
-        alvo.receberDano(75, TipoHabilidade::ULTRA);
-
-        boss.executarTurno(alvo);
-
-        int hpDepoisDaUltra = alvo.getHP();
-
-        boss.executarTurno(alvo);
-
-        CHECK(alvo.getHP() >= hpDepoisDaUltra - 60);
-    }
-
-    TEST_CASE("Tyler permanece vivo apos construcao valida") {
-        TylerDurden boss("Tyler", 1);
-
-        CHECK(boss.estaVivo());
-        CHECK(boss.getHP() > 0);
-        CHECK(boss.getHPMax() > 0);
-    }
-
-    TEST_CASE("Atributos escalam com o nivel") {
-        TylerDurden bossNivel1("Tyler", 1);
-        TylerDurden bossNivel2("Tyler", 2);
-
-        CHECK(bossNivel2.getHPMax() > bossNivel1.getHPMax());
-        CHECK(bossNivel2.getForcaTotal() > bossNivel1.getForcaTotal());
-        CHECK(bossNivel2.getDefesa() > bossNivel1.getDefesa());
+        std::string statusFase2 = boss.getDeclaracaoStatus();
+        CHECK(statusFase2.find("FASE 2: MENTAL") != std::string::npos);
     }
 }

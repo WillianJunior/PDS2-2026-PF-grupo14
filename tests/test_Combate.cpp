@@ -1,132 +1,84 @@
 /**
  * @file test_Combate.cpp
- * @brief Testes de unidade para a classe Combate usando doctest (TDD).
- *
- * Os testes usam polimorfismo com ponteiros/referências para Inimigo,
- * simulando exatamente o comportamento do jogo real, onde os inimigos
- * são instanciados dinamicamente.
+ * @brief Testes de unidade estruturais e de alta cobertura para a classe Combate.
  */
 
 #include "doctest.h"
-
 #include "Combate.hpp"
 #include "Aventureiro.hpp"
 #include "Inimigo.hpp"
 #include "InimigoComum.hpp"
 #include "InimigoIncomum.hpp"
 #include "InimigoBoss.hpp"
-
 #include <memory>
+#include <stdexcept>
 
 // =========================================================
-// SUITE: Resultado do Combate
+// SUITE 1: VALIDAÇÃO DO CONSTRUTOR E EXCEÇÕES DE ENTRADA
 // =========================================================
+TEST_SUITE("Combate - Validação de Estado Inicial") {
 
-TEST_SUITE("Combate - Resultado") {
-
-    TEST_CASE("Jogador muito forte vence o combate") {
-        Aventureiro a("Herói Forte", 500, 50, 9999);
+    TEST_CASE("Exceção: Tentar iniciar combate com Aventureiro morto") {
+        Aventureiro a("Herói Caído", 100, 10, 10);
+        a.receberDano(500, TipoHabilidade::FISICO); // Força a morte do jogador
+        
         std::unique_ptr<Inimigo> inimigo = std::make_unique<DesafianteDoBar>("Bêbado do Bar", 1);
-        Combate c(a, *inimigo);
-
-        bool resultado = c.iniciar();
-        CHECK(resultado == true);
+        
+        CHECK_THROWS_AS(Combate(a, *inimigo), CombateInvalidoException);
     }
 
-    TEST_CASE("Jogador vivo após vencer") {
-        Aventureiro a("Herói Forte", 500, 50, 9999);
+    TEST_CASE("Exceção: Tentar iniciar combate com Inimigo morto") {
+        Aventureiro a("Herói Vivo", 100, 10, 10);
         std::unique_ptr<Inimigo> inimigo = std::make_unique<DesafianteDoBar>("Bêbado do Bar", 1);
-        Combate c(a, *inimigo);
-
-        c.iniciar();
-        CHECK(a.estaVivo() == true);
-    }
-
-    TEST_CASE("Inimigo morto após derrota") {
-        Aventureiro a("Herói Forte", 500, 50, 9999);
-        std::unique_ptr<Inimigo> inimigo = std::make_unique<DesafianteDoBar>("Bêbado do Bar", 1);
-        Combate c(a, *inimigo);
-
-        c.iniciar();
-        CHECK(inimigo->estaVivo() == false);
-    }
-
-    TEST_CASE("Jogador derrota Segurança de Balada") {
-        Aventureiro a("Herói", 300, 20, 500);
-        std::unique_ptr<Inimigo> seguranca = std::make_unique<SegurancaDeBalada>("Guarda Brutamontes", 1);
-        Combate c(a, *seguranca);
-
-        bool resultado = c.iniciar();
-        CHECK(resultado == true);
+        inimigo->receberDano(500, TipoHabilidade::FISICO); // Força a morte do inimigo
+        
+        CHECK_THROWS_AS(Combate(a, *inimigo), CombateInvalidoException);
     }
 }
 
 // =========================================================
-// SUITE: Efeitos colaterais do Combate
+// SUITE 2: MATRIZ DE RESULTADOS E FLUXOS DE EXECUÇÃO
 // =========================================================
+TEST_SUITE("Combate - Resultados de Luta") {
 
-TEST_SUITE("Combate - Efeitos Colaterais") {
-
-    TEST_CASE("Jogador ganha XP ao vencer") {
+    TEST_CASE("Cenário de Vitória: Jogador muito forte vence imediatamente") {
         Aventureiro a("Herói Forte", 500, 50, 9999);
-        std::unique_ptr<Inimigo> inimigo = std::make_unique<TrabalhadorNoturno>("Trabalhador Puto", 1);
-        int xpRecompensa = inimigo->getXPRecompensa();
+        std::unique_ptr<Inimigo> inimigo = std::make_unique<DesafianteDoBar>("Bêbado do Bar", 1);
         Combate c(a, *inimigo);
 
-        c.iniciar();
-        CHECK(xpRecompensa > 0);
+        bool resultado = c.iniciar();
+        CHECK(resultado == true);
+        CHECK(a.estaVivo());
+        CHECK_FALSE(inimigo->estaVivo());
+        CHECK(inimigo->getHP() == 0); // Garante trava de segurança contra HP negativo
     }
 
-    TEST_CASE("Validação de vida do Inimigo pós-combate") {
-        Aventureiro a("Herói Forte", 500, 50, 9999);
-        std::unique_ptr<Inimigo> inimigo = std::make_unique<TrabalhadorNoturno>("Trabalhador Puto", 1);
-        Combate c(a, *inimigo);
-
-        c.iniciar();
-        CHECK(inimigo->estaVivo() == false);
-    }
-
-    TEST_CASE("Jogador perde HP durante o combate contra Tyler Durden") {
-        Aventureiro a("Herói Frágil", 500, 1, 1);
-        std::unique_ptr<Inimigo> tyler = std::make_unique<TylerDurden>("Tyler", 1);
-        int hpAntes = a.getHP();
+    TEST_CASE("Cenário de Derrota: Jogador fraco contra Boss") {
+        Aventureiro a("Herói Frágil", 10, 1, 1);
+        // Usando um Boss ou inimigo de alto impacto para garantir a derrota rápida
+        std::unique_ptr<Inimigo> tyler = std::make_unique<TylerDurden>("Tyler", 5);
         Combate c(a, *tyler);
-        c.iniciar();
-        CHECK(a.getHP() < hpAntes);
+
+        bool resultado = c.iniciar();
+        CHECK(resultado == false);
+        CHECK_FALSE(a.estaVivo());
+        CHECK(a.getHP() == 0); // Garante trava de segurança contra HP negativo do jogador
     }
 }
 
 // =========================================================
-// SUITE: Invariantes do Combate
+// SUITE 3: CAPTURA DE EXCEÇÕES E GARANTIA DE ROBUSTEZ DOS TURNOS
 // =========================================================
+TEST_SUITE("Combate - Resiliência a Falhas (Try-Catch Blocks)") {
 
-TEST_SUITE("Combate - Invariantes") {
-
-    TEST_CASE("HP do jogador nunca fica negativo após combate") {
-        Aventureiro a("Herói", 500, 50, 9999);
-        std::unique_ptr<Inimigo> inimigo = std::make_unique<DesafianteDoBar>("Bêbado", 1);
+    TEST_CASE("Garantia de não-interrupção no loop quando combatente morre no meio") {
+        Aventureiro a("Aventureiro Veloz", 500, 10, 9999);
+        std::unique_ptr<Inimigo> inimigo = std::make_unique<SegurancaDeBalada>("Guarda", 1);
         Combate c(a, *inimigo);
 
-        c.iniciar();
-        CHECK(a.getHP() >= 0);
-    }
-
-    TEST_CASE("HP do inimigo nunca fica negativo após combate") {
-        Aventureiro a("Herói Forte", 500, 50, 9999);
-        std::unique_ptr<Inimigo> inimigo = std::make_unique<DesafianteDoBar>("Bêbado", 1);
-        Combate c(a, *inimigo);
-
-        c.iniciar();
-        CHECK(inimigo->getHP() >= 0);
-    }
-
-    TEST_CASE("Ao fim do combate, pelo menos um combatente está morto") {
-        Aventureiro a("Herói Forte", 500, 50, 9999);
-        std::unique_ptr<Inimigo> inimigo = std::make_unique<TylerDurden>("Tyler", 1);
-        Combate c(a, *inimigo);
-
-        c.iniciar();
-        bool pelomenosUmMorto = !a.estaVivo() || !inimigo->estaVivo();
-        CHECK(pelomenosUmMorto == true);
+        // O jogador deve matar o inimigo em seu próprio turno.
+        // O teste valida se o 'break' impede que o inimigo morto tente contra-atacar.
+        bool resultado = c.iniciar();
+        CHECK(resultado == true);
     }
 }

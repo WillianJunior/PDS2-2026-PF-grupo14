@@ -1,20 +1,36 @@
 /**
  * @file test_Habilidade.cpp
- * @brief Testes de unidade estruturais e comportamentais para a classe Habilidade.
+ * @brief Testes de unidade estruturais de alta cobertura para Habilidade e Inimigo.
  */
 
 #include "doctest.h"
 #include "Habilidade.hpp"
+#include "Inimigo.hpp"
+#include "InimigoComum.hpp" // Dependência para instanciar subtipos de Inimigo se necessário
 #include <stdexcept>
+#include <string>
 
 // =========================================================
-// SUITE: Construção, Getters e Estado Inicial
+// SUITE 1: EXTENSÃO - CLASSE INIMIGO (BASE POO)
 // =========================================================
+TEST_SUITE("Inimigo - Métodos da Classe Base") {
 
+  TEST_CASE("Construção e Inicialização de Recompensa") {
+    DesafianteDoBar inimigo("Desafiante do Bar", 1);            
+    
+    CHECK(inimigo.getNome() == "Desafiante do Bar"); // Ajustado
+    CHECK(inimigo.getXPRecompensa() == 60);         // Ajustado
+    CHECK(inimigo.getHP() == 150);                  // Ajustado
+    CHECK(inimigo.estaVivo());
+}
+}
+
+// =========================================================
+// SUITE 2: CONSTRUÇÃO, GETTERS E ESTADO INICIAL
+// =========================================================
 TEST_SUITE("Habilidade - Construção e Atributos") {
 
     TEST_CASE("Instanciação Padrão - Armazenamento de Dados Básicos") {
-        // Corrigido para a ordem: ..., valorBase, atributoAfetado, duracao
         Habilidade h("Bola de Fogo", TipoHabilidade::ESPECIAL, 0, 5, 20, "", 0);
         
         CHECK(h.getNome() == "Bola de Fogo");
@@ -27,7 +43,6 @@ TEST_SUITE("Habilidade - Construção e Atributos") {
     }
 
     TEST_CASE("Instanciação com Efeito Temporal - Armazenamento de Duração") {
-        // Ordem corrigida: ..., valorBase, atributoAfetado, duracao
         Habilidade h("Veneno", TipoHabilidade::DOT, 2, 0, 5, "", 3);
         
         CHECK(h.getDuracaoEfeito() == 3);
@@ -35,7 +50,6 @@ TEST_SUITE("Habilidade - Construção e Atributos") {
     }
 
     TEST_CASE("Instanciação de Modificadores - Armazenamento de Atributo Alvo") {
-        // Ordem corrigida: ..., valorBase, atributoAfetado, duracao
         Habilidade h("Grito de Guerra", TipoHabilidade::SUPORTE, 4, 0, 10, "forca", 3);
         
         CHECK(h.getTipo() == TipoHabilidade::SUPORTE);
@@ -45,9 +59,8 @@ TEST_SUITE("Habilidade - Construção e Atributos") {
 }
 
 // =========================================================
-// SUITE: Travas de Segurança (Robustez e Exceções)
+// SUITE 3: TRAVAS DE SEGURANÇA (ROBUSTEZ E EXCEÇÕES)
 // =========================================================
-
 TEST_SUITE("Habilidade - Validações e Exceções") {
 
     TEST_CASE("Validação - Rejeitar Nome Vazio") {
@@ -94,9 +107,8 @@ TEST_SUITE("Habilidade - Validações e Exceções") {
 }
 
 // =========================================================
-// SUITE: Lógica de Negócio (Efeitos Temporais)
+// SUITE 4: LÓGICA DE NEGÓCIO (EFEITOS TEMPORAIS)
 // =========================================================
-
 TEST_SUITE("Habilidade - Identificação de Efeito Contínuo") {
 
     TEST_CASE("Habilidades Instantâneas NÃO são efeitos contínuos") {
