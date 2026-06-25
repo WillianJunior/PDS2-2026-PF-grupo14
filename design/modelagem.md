@@ -98,7 +98,7 @@ Como jogador derrotado, quero retornar ao último checkpoint seguro, para não p
 ## US08 — Recompensas Narrativas
 
 **História**
-Como jogador explorando caminhos opcionais, quero ganhar equipamentos especiais ao ajudar NPCs ou investigar áreas secretas, para fortalecer meu personagem sem depender apenas de combate.
+Como jogador explorando caminhos opcionais, quero ganhar equipamentos especiais ao ajudar ou conversar com NPCs, para fortalecer meu personagem sem depender apenas de combate.
 
 **Critérios de Aceitação**
 - `checarEventosEspeciais()` analisa o campo `itemGanhoID` da escolha selecionada
